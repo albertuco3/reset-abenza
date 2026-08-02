@@ -49,9 +49,9 @@ Abre [http://localhost:3000](http://localhost:3000).
 
 | Ruta | Uso |
 |------|-----|
-| `/login` | Acceso privado |
-| `/` | Dashboard (heatmaps + gráficas) |
-| `/check-in` | Formulario diario Mobile First |
+| `/` | Dashboard público (solo lectura) |
+| `/login` | Acceso para editar / check-in |
+| `/check-in` | Formulario diario (requiere login) |
 
 ## Producción
 

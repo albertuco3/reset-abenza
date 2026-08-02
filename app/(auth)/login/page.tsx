@@ -1,3 +1,5 @@
+import { Suspense } from "react";
+import Link from "next/link";
 import { LoginForm } from "@/components/auth/login-form";
 
 export default function LoginPage() {
@@ -9,13 +11,21 @@ export default function LoginPage() {
             Reset Abenza
           </p>
           <h1 className="mt-2 text-2xl font-semibold tracking-tight text-zinc-900">
-            Acceso privado
+            Acceso de edición
           </h1>
           <p className="mt-1 text-sm text-zinc-600">
-            Solo tú puedes entrar al dashboard.
+            El dashboard es público. Solo tú puedes iniciar sesión para
+            registrar o editar datos.
           </p>
         </div>
-        <LoginForm />
+        <Suspense fallback={<p className="text-sm text-zinc-500">Cargando…</p>}>
+          <LoginForm />
+        </Suspense>
+        <p className="mt-4 text-center text-sm text-zinc-500">
+          <Link href="/" className="text-emerald-800 hover:underline">
+            Ver dashboard sin entrar
+          </Link>
+        </p>
       </div>
     </main>
   );

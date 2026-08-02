@@ -68,7 +68,7 @@ Ejemplo de lectura del combo:
 ```
 
 **UX crítica:** formulario diario Mobile First, completar en **&lt; 1 minuto**.  
-**Seguridad:** autenticación cerrada — solo el propietario ve y escribe datos.
+**Seguridad:** dashboard en **lectura pública**; autenticación solo para **escribir** (check-in / CRUD). Sign-ups cerrados.
 
 ---
 
@@ -688,14 +688,13 @@ npm run dev
 
 ## 8. Criterios de aceptación globales
 
-1. Login obligatorio; sin sesión no hay lectura ni escritura de datos.
-2. Check-in diario usable con una mano en móvil en &lt; 1 minuto (EMOM = 2 totales, no 60 series).
-3. Heatmaps reflejan `habit_clean` y `habit_training` por día del año de reseteo.
-4. Charts de fuerza, EMOM, cardio (volumen + ritmo) y recuperación muestran series temporales correctas tras upserts.
-5. Una sesión de cardio guarda distancia, duración y ritmo coherentes; el dashboard no prioriza un sprint corto frente a un largo.
-6. Un día con EMOM puede guardar ambos bloques (`pull_up` + `push_up`) o solo uno.
-7. Despliegue en Vercel + Supabase en free tiers, con CI desde GitHub.
-8. Un solo propietario operativo (sign-up cerrado + RLS).
+1. Dashboard legible sin login; check-in y escrituras solo con sesión del propietario.
+2. RLS: SELECT público en tablas de tracking; INSERT/UPDATE/DELETE solo `auth.uid() = user_id`.
+3. Check-in diario usable con una mano en móvil en &lt; 1 minuto (EMOM = 2 totales, no 60 series).
+4. Heatmaps y charts reflejan hábitos, fuerza/hipertrofia, EMOM, cardio y recuperación.
+5. Una sesión de cardio guarda distancia, duración y ritmo coherentes.
+6. Despliegue en Vercel + Supabase en free tiers.
+7. Sign-up cerrado; un solo propietario puede editar.
 
 ---
 

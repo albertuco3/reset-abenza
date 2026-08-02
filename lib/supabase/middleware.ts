@@ -31,17 +31,21 @@ export async function updateSession(request: NextRequest) {
 
   const pathname = request.nextUrl.pathname;
   const isLogin = pathname === "/login";
-  const isAuthCallback = pathname.startsWith("/auth/");
+  const isCheckIn = pathname.startsWith("/check-in");
 
-  if (!user && !isLogin && !isAuthCallback) {
+  // Solo check-in exige sesión; el dashboard es público (lectura)
+  if (!user && isCheckIn) {
     const url = request.nextUrl.clone();
     url.pathname = "/login";
+    url.searchParams.set("next", "/check-in");
     return NextResponse.redirect(url);
   }
 
   if (user && isLogin) {
     const url = request.nextUrl.clone();
-    url.pathname = "/";
+    const next = request.nextUrl.searchParams.get("next");
+    url.pathname = next && next.startsWith("/") ? next : "/";
+    url.search = "";
     return NextResponse.redirect(url);
   }
 

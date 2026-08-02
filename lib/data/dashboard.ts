@@ -15,15 +15,10 @@ export async function getDashboardData(): Promise<DashboardData> {
   };
 
   const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) return empty;
 
   const { data: entries } = await supabase
     .from("daily_entries")
     .select("*")
-    .eq("user_id", user.id)
     .gte("entry_date", startDate)
     .lte("entry_date", endDate)
     .order("entry_date", { ascending: true });

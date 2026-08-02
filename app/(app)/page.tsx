@@ -5,10 +5,15 @@ import { RecoveryCharts } from "@/components/charts/recovery-charts";
 import { HabitHeatmap } from "@/components/heatmap/habit-heatmap";
 import { getDashboardData } from "@/lib/data/dashboard";
 import { formatDisplayDate } from "@/lib/dates";
+import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
 
 export default async function DashboardPage() {
   const data = await getDashboardData();
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
   return (
     <main className="space-y-5">
@@ -19,14 +24,17 @@ export default async function DashboardPage() {
           </h1>
           <p className="mt-1 text-sm text-zinc-600">
             Año de reset desde {formatDisplayDate(data.resetStartDate)}
+            {!user ? " · Solo lectura" : null}
           </p>
         </div>
-        <Link
-          href="/check-in"
-          className="inline-flex h-10 items-center rounded-xl bg-emerald-800 px-4 text-sm font-semibold text-white"
-        >
-          Check-in de hoy
-        </Link>
+        {user ? (
+          <Link
+            href="/check-in"
+            className="inline-flex h-10 items-center rounded-xl bg-emerald-800 px-4 text-sm font-semibold text-white"
+          >
+            Check-in de hoy
+          </Link>
+        ) : null}
       </div>
 
       <HabitHeatmap
