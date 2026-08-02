@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
@@ -15,8 +15,16 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Reset Abenza",
   description: "Tracker personal de reseteo físico y mental",
+  manifest: "/manifest.webmanifest",
+  appleWebApp: {
+    capable: true,
+    title: "Reset Abenza",
+  },
 };
 
+export const viewport: Viewport = {
+  themeColor: "#065f46",
+};
 export default function RootLayout({
   children,
 }: Readonly<{

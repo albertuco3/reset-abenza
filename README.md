@@ -1,36 +1,58 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Reset Abenza
 
-## Getting Started
+Tracker personal privado para un año de reseteo físico y mental: hábitos, fuerza, EMOM, cardio y recuperación.
 
-First, run the development server:
+## Stack
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+- Next.js (App Router) + TypeScript + Tailwind
+- Supabase (Auth + PostgreSQL + RLS)
+- Recharts
+- Vercel (deploy recomendado)
+
+## Setup local
+
+1. Clona el repo e instala dependencias:
+
+```powershell
+npm install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. Copia variables de entorno:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```powershell
+Copy-Item .env.local.example .env.local
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Rellena:
 
-## Learn More
+- `NEXT_PUBLIC_SUPABASE_URL`
+- `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+- `NEXT_PUBLIC_RESET_START_DATE` (inicio del año de reset, `YYYY-MM-DD`)
 
-To learn more about Next.js, take a look at the following resources:
+3. En Supabase SQL Editor, ejecuta `supabase/migrations/0001_init.sql`.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+4. Crea tu usuario en **Authentication → Users** y desactiva nuevos sign-ups.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+5. Arranca:
 
-## Deploy on Vercel
+```powershell
+npm run dev
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Abre [http://localhost:3000](http://localhost:3000).
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Datos de prueba (opcional)
+
+`supabase/seed_demo.sql` — sustituye `YOUR_USER_UUID` por tu `auth.users.id` y ejecuta. Bórralo o ignóralo cuando uses datos reales.
+
+## Rutas
+
+| Ruta | Uso |
+|------|-----|
+| `/login` | Acceso privado |
+| `/` | Dashboard (heatmaps + gráficas) |
+| `/check-in` | Formulario diario Mobile First |
+
+## Documentación de arquitectura
+
+Ver [`PLAN.md`](./PLAN.md).

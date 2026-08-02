@@ -1,12 +1,89 @@
-export default function DashboardPage() {
+import { CardioChart } from "@/components/charts/cardio-chart";
+import { EmomChart } from "@/components/charts/emom-chart";
+import { LiftComboChart } from "@/components/charts/lift-combo-chart";
+import { RecoveryCharts } from "@/components/charts/recovery-charts";
+import { HabitHeatmap } from "@/components/heatmap/habit-heatmap";
+import { getDashboardData } from "@/lib/data/dashboard";
+import { formatDisplayDate } from "@/lib/dates";
+import Link from "next/link";
+
+export default async function DashboardPage() {
+  const data = await getDashboardData();
+
   return (
-    <main>
-      <h1 className="text-2xl font-semibold tracking-tight text-zinc-900">
-        Dashboard
-      </h1>
-      <p className="mt-2 text-sm text-zinc-600">
-        Auth lista. El check-in y las gráficas llegan en las siguientes fases.
-      </p>
+    <main className="space-y-5">
+      <div className="flex flex-wrap items-end justify-between gap-3">
+        <div>
+          <h1 className="text-2xl font-semibold tracking-tight text-zinc-900">
+            Dashboard
+          </h1>
+          <p className="mt-1 text-sm text-zinc-600">
+            Año de reset desde {formatDisplayDate(data.resetStartDate)}
+          </p>
+        </div>
+        <Link
+          href="/check-in"
+          className="inline-flex h-10 items-center rounded-xl bg-emerald-800 px-4 text-sm font-semibold text-white"
+        >
+          Check-in de hoy
+        </Link>
+      </div>
+
+      <HabitHeatmap
+        habit="habit_clean"
+        entries={data.entries}
+        resetStartDate={data.resetStartDate}
+      />
+      <HabitHeatmap
+        habit="habit_training"
+        entries={data.entries}
+        resetStartDate={data.resetStartDate}
+      />
+
+      <LiftComboChart
+        title="Sentadilla · Fuerza"
+        subtitle="Barras = kg · línea = reps (1ª serie)"
+        exercise="squat"
+        modality="strength"
+        data={data.strength}
+      />
+      <LiftComboChart
+        title="Sentadilla · Hipertrofia"
+        subtitle="Barras = kg · línea = reps (1ª serie)"
+        exercise="squat"
+        modality="hypertrophy"
+        data={data.strength}
+      />
+      <LiftComboChart
+        title="Dominadas lastradas · Fuerza"
+        subtitle="Barras = kg de lastre · línea = reps"
+        exercise="pull_up"
+        modality="strength"
+        data={data.strength}
+        weightLabel="lastre kg"
+      />
+      <LiftComboChart
+        title="Dominadas · Hipertrofia (clásico)"
+        subtitle="Reps de la 1ª serie"
+        exercise="pull_up"
+        modality="hypertrophy"
+        data={data.strength}
+        showWeight={false}
+        showReps
+      />
+      <LiftComboChart
+        title="Flexiones · Hipertrofia (clásico)"
+        subtitle="Reps de la 1ª serie"
+        exercise="push_up"
+        modality="hypertrophy"
+        data={data.strength}
+        showWeight={false}
+        showReps
+      />
+
+      <EmomChart data={data.emom} />
+      <CardioChart data={data.cardio} />
+      <RecoveryCharts entries={data.entries} />
     </main>
   );
 }

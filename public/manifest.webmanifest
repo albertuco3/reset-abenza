@@ -1,0 +1,10 @@
+{
+  "name": "Reset Abenza",
+  "short_name": "Reset Abenza",
+  "description": "Tracker personal de reseteo físico y mental",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#fafafa",
+  "theme_color": "#065f46",
+  "lang": "es"
+}

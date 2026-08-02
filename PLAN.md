@@ -12,10 +12,13 @@
 | Dominio | Qué se registra | Visualización |
 |--------|------------------|---------------|
 | Hábitos | Limpio (0 alcohol / 0 tabaco), Entrenamiento completado | Heatmap tipo GitHub (365 días) |
-| Fuerza | Kilos movidos: sentadilla, peso muerto, prensa | Líneas de sobrecarga progresiva |
-| EMOM | Repeticiones totales en EMOM 30' de dominadas y 30' de flexiones | Líneas de volumen (reps / sesión) |
+| Sesión | Selector diario (rutina semanal); inputs según tipo | — |
+| Pierna | Sentadilla kg + reps (fuerza o hipertrofia) | Combo kg + reps por modalidad |
+| Torso fuerza | Dominadas lastradas (kg lastre + reps) | Combo lastre + reps |
+| Torso hipertrofia | Clásico (reps 1ª serie) o EMOM | Reps clásico + chart EMOM |
+| EMOM | Totales 30' dominadas / flexiones (dentro de torso hipertrofia) | Líneas de volumen |
 | Cardio | Distancia (km) + duración + ritmo (min/km) | Volumen + ritmo combinados (ver §1.2) |
-| Recuperación | FCR (bpm), sueño (1–10), energía (1–10) | Líneas de tendencia |
+| Recuperación | Sueño (1–10), energía (1–10) | Líneas de tendencia |
 
 ### 1.1 Protocolo EMOM (dominadas + flexiones)
 
@@ -173,7 +176,7 @@ profiles 1──1 auth.users
     └─── daily_entries (1 fila por usuario + fecha)
               │
               ├── habit flags (limpio, entrenamiento)
-              ├── recovery metrics (fcr, sueño, energía)
+              ├── recovery metrics (sueño, energía)
               ├── strength_logs (N ejercicios ese día)
               ├── emom_logs (0..2 bloques: dominadas + flexiones)
               └── cardio_logs (0..1 sesión de carrera ese día)
@@ -204,7 +207,7 @@ daily_entries
     │ entry_date (date)          -- UNIQUE(user_id, entry_date)
     │ habit_clean (boolean)      -- "Limpio"
     │ habit_training (boolean)   -- "Entrenamiento completado"
-    │ resting_hr (smallint)      -- FCR bpm, nullable
+    │ resting_hr (smallint)      -- legacy/no usado en UI (sin reloj)
     │ sleep_quality (smallint)   -- 1..10, nullable
     │ energy_level (smallint)    -- 1..10, nullable
     │ notes (text, nullable)
@@ -436,7 +439,6 @@ type DailyCheckIn = {
   entry_date: string; // YYYY-MM-DD
   habit_clean: boolean;
   habit_training: boolean;
-  resting_hr?: number;
   sleep_quality?: number;
   energy_level?: number;
   strength?: Partial<Record<'squat' | 'deadlift' | 'leg_press', number>>;
@@ -527,7 +529,7 @@ reset-abenza/
 
 - [x] Crear repo GitHub `ResetAbenza`. *(https://github.com/albertuco3/reset-abenza)*
 - [x] `npx create-next-app@latest` (TS, Tailwind, App Router, ESLint).
-- [ ] Inicializar shadcn/ui.
+- [x] Inicializar shadcn/ui. *(omitido: UI con Tailwind propio para ir más rápido)*
 - [x] Crear proyecto Supabase; copiar URL + anon key.
 - [x] Instalar `@supabase/supabase-js` y `@supabase/ssr`.
 - [x] Aplicar migración SQL (tablas + RLS). *(archivo listo en `supabase/migrations/0001_init.sql`)*
@@ -542,44 +544,44 @@ reset-abenza/
 - [x] Middleware Next que redirige a `/login` si no hay sesión.
 - [x] Callback / refresh de sesión (`@supabase/ssr`).
 - [x] Logout en layout.
-- [ ] Probar que rutas del dashboard no son accesibles sin cookie de sesión.
+- [x] Probar que rutas del dashboard no son accesibles sin cookie de sesión.
 
 **Criterio de salida:** solo tu cuenta entra; anónimo ve solo login.
 
 ### Fase 2 — Check-in Mobile First (1–2 días)
 
-- [ ] Página `/check-in` con React Hook Form + Zod.
-- [ ] Toggles grandes: Limpio / Entrenamiento.
-- [ ] Bloque recuperación: FCR, sueño, energía (sliders o steppers 1–10).
-- [ ] Bloque fuerza: 3 inputs kg (opcionales).
-- [ ] Bloque EMOM: reps totales dominadas (30') + reps totales flexiones (30'), opcionales.
-- [ ] Bloque cardio: distancia + tiempo (ritmo auto) o distancia + ritmo; helper mm:ss.
-- [ ] Upsert atómico (entry + strength + emom + cardio) vía cliente Supabase o Server Action.
-- [ ] Feedback toast “Guardado” + opción “ir al dashboard”.
-- [ ] Default `entry_date = hoy` (timezone Europe/Madrid).
+- [x] Página `/check-in` con React Hook Form + Zod.
+- [x] Toggles grandes: Limpio / Entrenamiento.
+- [x] Bloque recuperación: sueño, energía (1–10). *(FCR omitido: sin reloj)*
+- [x] Bloque fuerza: 3 inputs kg (opcionales).
+- [x] Bloque EMOM: reps totales dominadas (30') + reps totales flexiones (30'), opcionales.
+- [x] Bloque cardio: distancia + tiempo (ritmo auto) o distancia + ritmo; helper mm:ss.
+- [x] Upsert atómico (entry + strength + emom + cardio) vía cliente Supabase o Server Action.
+- [x] Feedback toast “Guardado” + opción “ir al dashboard”.
+- [x] Default `entry_date = hoy` (timezone Europe/Madrid).
 
 **Criterio de salida:** en el móvil, un día completo se registra en &lt; 60 s.
 
 ### Fase 3 — Dashboard analítico (2–3 días)
 
-- [ ] Heatmap Limpio + Heatmap Entrenamiento (datos del año).
-- [ ] Chart fuerza: 3 series o tabs por ejercicio (sentadilla / muerto / prensa).
-- [ ] Chart EMOM: 2 series (dominadas / flexiones) de `total_reps` en el tiempo; tooltip con reps/min.
-- [ ] Cardio KPIs: km totales, salida más larga, mejor ritmo en salidas ≥ 5 km.
-- [ ] Chart cardio combo: barras `distance_km` + línea `pace_min_per_km` (eje derecho, invertido); tooltip con km/tiempo/ritmo.
-- [ ] Filtro opcional “ritmo solo si distancia ≥ N km”.
-- [ ] Charts recuperación: FCR, sueño, energía (pueden ser 3 small multiples).
-- [ ] Empty states cuando no hay datos.
-- [ ] Skeleton loaders; layout responsive (charts apilados en móvil).
+- [x] Heatmap Limpio + Heatmap Entrenamiento (datos del año).
+- [x] Chart fuerza: 3 series o tabs por ejercicio (sentadilla / muerto / prensa).
+- [x] Chart EMOM: 2 series (dominadas / flexiones) de `total_reps` en el tiempo; tooltip con reps/min.
+- [x] Cardio KPIs: km totales, salida más larga, mejor ritmo en salidas ≥ 5 km.
+- [x] Chart cardio combo: barras `distance_km` + línea `pace_min_per_km` (eje derecho, invertido); tooltip con km/tiempo/ritmo.
+- [x] Filtro opcional “ritmo solo si distancia ≥ N km”.
+- [x] Charts recuperación: sueño, energía.
+- [x] Empty states cuando no hay datos.
+- [x] Skeleton loaders; layout responsive (charts apilados en móvil). *(empty states + layout responsive; skeletons diferidos)*
 
 **Criterio de salida:** con 2–3 semanas de datos seed, se ven tendencias claras.
 
 ### Fase 4 — Pulido y datos semilla (1 día)
 
-- [ ] Seed SQL o script para datos de prueba (borrar antes de prod real).
-- [ ] Validaciones de rangos y mensajes de error claros.
-- [ ] PWA light opcional (`manifest` + icon) para “Añadir a inicio” en el móvil.
-- [ ] README con variables de entorno.
+- [x] Seed SQL o script para datos de prueba (borrar antes de prod real).
+- [x] Validaciones de rangos y mensajes de error claros.
+- [x] PWA light opcional (`manifest` + icon) para “Añadir a inicio” en el móvil. *(manifest; icon custom pendiente)*
+- [x] README con variables de entorno.
 
 **Criterio de salida:** usable a diario sin fricción.
 
@@ -590,6 +592,7 @@ reset-abenza/
 - [ ] Dominio `*.vercel.app` (custom domain opcional).
 - [ ] Smoke test: login → check-in → ver punto en heatmap/charts.
 - [ ] Revisar que sign-up sigue desactivado en Supabase prod.
+- [ ] Añadir URL de Vercel en Supabase Auth → URL Configuration (Site URL + Redirect URLs).
 
 **Criterio de salida:** URL pública, acceso solo con tu login, coste $0.
 
