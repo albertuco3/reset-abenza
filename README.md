@@ -53,6 +53,18 @@ Abre [http://localhost:3000](http://localhost:3000).
 | `/` | Dashboard (heatmaps + gráficas) |
 | `/check-in` | Formulario diario Mobile First |
 
+## Producción
+
+- App: [https://reset-abenza.vercel.app](https://reset-abenza.vercel.app)
+- Repo: [github.com/albertuco3/reset-abenza](https://github.com/albertuco3/reset-abenza)
+
+En Supabase → **Authentication → URL Configuration**:
+
+- **Site URL:** `https://reset-abenza.vercel.app`
+- **Redirect URLs:** `https://reset-abenza.vercel.app/**` y `http://localhost:3000/**`
+
+Para redeploys automáticos: en Vercel → Project → Settings → Git → conectar `albertuco3/reset-abenza`.
+
 ## Documentación de arquitectura
 
 Ver [`PLAN.md`](./PLAN.md).

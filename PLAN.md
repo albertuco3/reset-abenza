@@ -587,11 +587,11 @@ reset-abenza/
 
 ### Fase 5 — Despliegue producción (½ día)
 
-- [ ] Conectar repo a Vercel.
-- [ ] Env vars de producción.
-- [ ] Dominio `*.vercel.app` (custom domain opcional).
+- [x] Conectar repo a Vercel. *(proyecto `reset-abenza`; CI GitHub: conectar en dashboard Vercel si falla el link automático)*
+- [x] Env vars de producción.
+- [x] Dominio `*.vercel.app` (custom domain opcional). *(https://reset-abenza.vercel.app)*
 - [ ] Smoke test: login → check-in → ver punto en heatmap/charts.
-- [ ] Revisar que sign-up sigue desactivado en Supabase prod.
+- [x] Revisar que sign-up sigue desactivado en Supabase prod. *(ya desactivado en setup)*
 - [ ] Añadir URL de Vercel en Supabase Auth → URL Configuration (Site URL + Redirect URLs).
 
 **Criterio de salida:** URL pública, acceso solo con tu login, coste $0.
