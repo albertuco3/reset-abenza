@@ -38,18 +38,23 @@ export function MindsetModal({ isOpen, onClose }: MindsetModalProps) {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-5">
+    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4">
       {/* Backdrop con desfoque */}
       <div
         className="fixed inset-0 bg-zinc-950/80 backdrop-blur-md transition-opacity"
         onClick={handleClose}
       />
 
-      {/* Contenedor del Modal con scroll y contención estricta */}
-      <div className="relative z-10 flex max-h-[85dvh] sm:max-h-[90vh] w-full max-w-3xl flex-col overflow-hidden rounded-2xl border border-zinc-800 bg-zinc-900 text-zinc-100 shadow-2xl ring-1 ring-white/10">
+      {/* Contenedor del Modal: Estilo Bottom Sheet en móvil, Modal centrado en escritorio */}
+      <div className="relative z-10 flex max-h-[78dvh] sm:max-h-[88vh] w-full max-w-3xl flex-col overflow-hidden rounded-t-2xl sm:rounded-2xl border-t sm:border border-zinc-800 bg-zinc-900 text-zinc-100 shadow-2xl ring-1 ring-white/10">
         
+        {/* Indicador táctil visual para móvil */}
+        <div className="flex sm:hidden justify-center pt-2 pb-0.5 bg-zinc-900 shrink-0">
+          <div className="h-1 w-10 rounded-full bg-zinc-700/60" />
+        </div>
+
         {/* Cabecera (shrink-0) */}
-        <div className="flex shrink-0 items-center justify-between border-b border-zinc-800 bg-zinc-900/90 px-4 py-3 sm:px-5 sm:py-4">
+        <div className="flex shrink-0 items-center justify-between border-b border-zinc-800 bg-zinc-900/95 px-4 py-3 sm:px-5 sm:py-4">
           <div className="flex items-center gap-2.5">
             <span className="flex h-8 w-8 sm:h-9 sm:w-9 items-center justify-center rounded-xl bg-gradient-to-br from-amber-500/20 to-orange-600/30 text-amber-400 ring-1 ring-amber-500/30 text-base sm:text-lg">
               🔥
@@ -74,7 +79,7 @@ export function MindsetModal({ isOpen, onClose }: MindsetModalProps) {
         </div>
 
         {/* Navegación por Pestañas (shrink-0) */}
-        <div className="flex shrink-0 overflow-x-auto border-b border-zinc-800 bg-zinc-950/50 px-3 sm:px-5 pt-2.5 sm:pt-3 gap-1.5 sm:gap-2 scrollbar-none">
+        <div className="flex shrink-0 overflow-x-auto border-b border-zinc-800 bg-zinc-950/50 px-3 sm:px-5 pt-2 sm:pt-3 gap-1.5 sm:gap-2 scrollbar-none">
           <button
             type="button"
             onClick={() => setActiveTab("inventory")}
@@ -244,7 +249,7 @@ export function MindsetModal({ isOpen, onClose }: MindsetModalProps) {
         </div>
 
         {/* Pie de modal (shrink-0) */}
-        <div className="flex shrink-0 flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 border-t border-zinc-800 bg-zinc-950/80 px-4 py-3 sm:px-5 sm:py-3.5">
+        <div className="flex shrink-0 flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2.5 sm:gap-3 border-t border-zinc-800 bg-zinc-950/90 px-4 py-3 sm:px-5 sm:py-3.5">
           <label className="flex items-center gap-2 text-xs text-zinc-400 cursor-pointer select-none hover:text-zinc-200">
             <input
               type="checkbox"
