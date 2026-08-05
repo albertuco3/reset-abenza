@@ -38,27 +38,27 @@ export function MindsetModal({ isOpen, onClose }: MindsetModalProps) {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-5">
       {/* Backdrop con desfoque */}
       <div
         className="fixed inset-0 bg-zinc-950/80 backdrop-blur-md transition-opacity"
         onClick={handleClose}
       />
 
-      {/* Contenedor del Modal */}
-      <div className="relative z-10 flex max-h-[90vh] w-full max-w-3xl flex-col overflow-hidden rounded-2xl border border-zinc-800 bg-zinc-900 text-zinc-100 shadow-2xl ring-1 ring-white/10">
+      {/* Contenedor del Modal con scroll y contención estricta */}
+      <div className="relative z-10 flex max-h-[85dvh] sm:max-h-[90vh] w-full max-w-3xl flex-col overflow-hidden rounded-2xl border border-zinc-800 bg-zinc-900 text-zinc-100 shadow-2xl ring-1 ring-white/10">
         
-        {/* Cabecera */}
-        <div className="flex items-center justify-between border-b border-zinc-800 bg-zinc-900/90 px-5 py-4">
+        {/* Cabecera (shrink-0) */}
+        <div className="flex shrink-0 items-center justify-between border-b border-zinc-800 bg-zinc-900/90 px-4 py-3 sm:px-5 sm:py-4">
           <div className="flex items-center gap-2.5">
-            <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-amber-500/20 to-orange-600/30 text-amber-400 ring-1 ring-amber-500/30 text-lg">
+            <span className="flex h-8 w-8 sm:h-9 sm:w-9 items-center justify-center rounded-xl bg-gradient-to-br from-amber-500/20 to-orange-600/30 text-amber-400 ring-1 ring-amber-500/30 text-base sm:text-lg">
               🔥
             </span>
             <div>
-              <h2 className="text-lg font-bold tracking-tight text-white">
+              <h2 className="text-base sm:text-lg font-bold tracking-tight text-white">
                 Mindset del Reseteo
               </h2>
-              <p className="text-xs text-zinc-400">
+              <p className="text-[11px] sm:text-xs text-zinc-400">
                 1 Año de transformación fisiológica y mental
               </p>
             </div>
@@ -73,12 +73,12 @@ export function MindsetModal({ isOpen, onClose }: MindsetModalProps) {
           </button>
         </div>
 
-        {/* Navegación por Pestañas */}
-        <div className="flex border-b border-zinc-800 bg-zinc-950/50 px-5 pt-3 gap-2">
+        {/* Navegación por Pestañas (shrink-0) */}
+        <div className="flex shrink-0 overflow-x-auto border-b border-zinc-800 bg-zinc-950/50 px-3 sm:px-5 pt-2.5 sm:pt-3 gap-1.5 sm:gap-2 scrollbar-none">
           <button
             type="button"
             onClick={() => setActiveTab("inventory")}
-            className={`flex items-center gap-2 rounded-t-xl px-4 py-2.5 text-xs sm:text-sm font-semibold transition border-b-2 ${
+            className={`flex items-center gap-1.5 sm:gap-2 whitespace-nowrap rounded-t-xl px-3 sm:px-4 py-2 sm:py-2.5 text-xs sm:text-sm font-semibold transition border-b-2 ${
               activeTab === "inventory"
                 ? "border-emerald-500 bg-zinc-900 text-emerald-400 shadow-sm"
                 : "border-transparent text-zinc-400 hover:text-zinc-200 hover:bg-zinc-900/40"
@@ -90,7 +90,7 @@ export function MindsetModal({ isOpen, onClose }: MindsetModalProps) {
           <button
             type="button"
             onClick={() => setActiveTab("espartano")}
-            className={`flex items-center gap-2 rounded-t-xl px-4 py-2.5 text-xs sm:text-sm font-semibold transition border-b-2 ${
+            className={`flex items-center gap-1.5 sm:gap-2 whitespace-nowrap rounded-t-xl px-3 sm:px-4 py-2 sm:py-2.5 text-xs sm:text-sm font-semibold transition border-b-2 ${
               activeTab === "espartano"
                 ? "border-rose-500 bg-zinc-900 text-rose-400 shadow-sm"
                 : "border-transparent text-zinc-400 hover:text-zinc-200 hover:bg-zinc-900/40"
@@ -101,25 +101,25 @@ export function MindsetModal({ isOpen, onClose }: MindsetModalProps) {
           </button>
         </div>
 
-        {/* Cuerpo / Contenido desplazable */}
-        <div className="flex-1 overflow-y-auto p-5 space-y-6 scrollbar-thin scrollbar-thumb-zinc-700">
+        {/* Cuerpo / Contenido desplazable (min-h-0 + flex-1) */}
+        <div className="flex-1 min-h-0 overflow-y-auto p-4 sm:p-5 space-y-4 sm:space-y-6 scrollbar-thin scrollbar-thumb-zinc-700">
           {activeTab === "inventory" ? (
-            <div className="space-y-5">
+            <div className="space-y-4 sm:space-y-5">
               {/* Nota introductoria */}
-              <div className="rounded-xl border border-emerald-500/20 bg-emerald-950/30 p-4 text-xs sm:text-sm text-emerald-200/90 leading-relaxed">
+              <div className="rounded-xl border border-emerald-500/20 bg-emerald-950/30 p-3.5 sm:p-4 text-xs sm:text-sm text-emerald-200/90 leading-relaxed">
                 💡 <strong className="text-emerald-400">Pura Fisiología:</strong> Este es el inventario exacto de todo lo que vas a ganar en este año de reseteo biológico. No es motivación barata, es ciencia aplicada a tu cuerpo.
               </div>
 
               {/* Grid de 4 Pilares */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
                 
                 {/* 1. Cerebro */}
-                <div className="rounded-xl border border-cyan-500/20 bg-gradient-to-br from-cyan-950/20 to-zinc-900 p-4 space-y-3">
-                  <div className="flex items-center gap-2 text-cyan-400 font-semibold text-sm">
-                    <span className="text-lg">🧠</span>
+                <div className="rounded-xl border border-cyan-500/20 bg-gradient-to-br from-cyan-950/20 to-zinc-900 p-3.5 sm:p-4 space-y-2.5 sm:space-y-3">
+                  <div className="flex items-center gap-2 text-cyan-400 font-semibold text-xs sm:text-sm">
+                    <span className="text-base sm:text-lg">🧠</span>
                     <span>Tu Cerebro y Agilidad Mental</span>
                   </div>
-                  <ul className="space-y-2.5 text-xs text-zinc-300">
+                  <ul className="space-y-2 text-[11px] sm:text-xs text-zinc-300">
                     <li>
                       <strong className="text-cyan-300">Foco absoluto frente a la pantalla:</strong> Vas a entrar en &quot;la zona&quot; al picar código o resolver problemas de arquitectura web mucho más rápido. Sin neuroinflamación, procesarás y retendrás conceptos complejos a otro nivel.
                     </li>
@@ -136,12 +136,12 @@ export function MindsetModal({ isOpen, onClose }: MindsetModalProps) {
                 </div>
 
                 {/* 2. Salud */}
-                <div className="rounded-xl border border-rose-500/20 bg-gradient-to-br from-rose-950/20 to-zinc-900 p-4 space-y-3">
-                  <div className="flex items-center gap-2 text-rose-400 font-semibold text-sm">
-                    <span className="text-lg">🫀</span>
+                <div className="rounded-xl border border-rose-500/20 bg-gradient-to-br from-rose-950/20 to-zinc-900 p-3.5 sm:p-4 space-y-2.5 sm:space-y-3">
+                  <div className="flex items-center gap-2 text-rose-400 font-semibold text-xs sm:text-sm">
+                    <span className="text-base sm:text-lg">🫀</span>
                     <span>Tu Salud y Vitalidad (Por dentro)</span>
                   </div>
-                  <ul className="space-y-2.5 text-xs text-zinc-300">
+                  <ul className="space-y-2 text-[11px] sm:text-xs text-zinc-300">
                     <li>
                       <strong className="text-rose-300">Oxígeno a raudales:</strong> Pulmones limpios de monóxido de carbono. Sangre oxigenada para no cansarte al subir escaleras o hacer esfuerzos.
                     </li>
@@ -158,12 +158,12 @@ export function MindsetModal({ isOpen, onClose }: MindsetModalProps) {
                 </div>
 
                 {/* 3. Físico y Rendimiento */}
-                <div className="rounded-xl border border-amber-500/20 bg-gradient-to-br from-amber-950/20 to-zinc-900 p-4 space-y-3">
-                  <div className="flex items-center gap-2 text-amber-400 font-semibold text-sm">
-                    <span className="text-lg">🦍</span>
+                <div className="rounded-xl border border-amber-500/20 bg-gradient-to-br from-amber-950/20 to-zinc-900 p-3.5 sm:p-4 space-y-2.5 sm:space-y-3">
+                  <div className="flex items-center gap-2 text-amber-400 font-semibold text-xs sm:text-sm">
+                    <span className="text-base sm:text-lg">🦍</span>
                     <span>Tu Físico y Rendimiento</span>
                   </div>
-                  <ul className="space-y-2.5 text-xs text-zinc-300">
+                  <ul className="space-y-2 text-[11px] sm:text-xs text-zinc-300">
                     <li>
                       <strong className="text-amber-300">Creación de músculo real:</strong> Sin alcohol bloqueando la síntesis proteica, cada sentadilla, remo pesado y fondo en anillas será hipertrofia real.
                     </li>
@@ -180,12 +180,12 @@ export function MindsetModal({ isOpen, onClose }: MindsetModalProps) {
                 </div>
 
                 {/* 4. Estética */}
-                <div className="rounded-xl border border-emerald-500/20 bg-gradient-to-br from-emerald-950/20 to-zinc-900 p-4 space-y-3">
-                  <div className="flex items-center gap-2 text-emerald-400 font-semibold text-sm">
-                    <span className="text-lg">📸</span>
+                <div className="rounded-xl border border-emerald-500/20 bg-gradient-to-br from-emerald-950/20 to-zinc-900 p-3.5 sm:p-4 space-y-2.5 sm:space-y-3">
+                  <div className="flex items-center gap-2 text-emerald-400 font-semibold text-xs sm:text-sm">
+                    <span className="text-base sm:text-lg">📸</span>
                     <span>Estética y &quot;El Efecto Buena Cara&quot;</span>
                   </div>
-                  <ul className="space-y-2.5 text-xs text-zinc-300">
+                  <ul className="space-y-2 text-[11px] sm:text-xs text-zinc-300">
                     <li>
                       <strong className="text-emerald-300">Piel nueva (Colágeno a tope):</strong> Sin tabaco destruyendo elastina ni alcohol deshidratándote. Tono sano, rosado y brillante.
                     </li>
@@ -198,10 +198,10 @@ export function MindsetModal({ isOpen, onClose }: MindsetModalProps) {
               </div>
             </div>
           ) : (
-            <div className="space-y-5">
+            <div className="space-y-4 sm:space-y-5">
               {/* Alerta Espartana */}
-              <div className="rounded-xl border border-rose-600/40 bg-gradient-to-r from-rose-950/60 via-red-950/40 to-zinc-900 p-5 space-y-4 shadow-lg shadow-rose-950/30">
-                <div className="flex items-center gap-2 text-rose-400 font-extrabold text-sm sm:text-base uppercase tracking-wider">
+              <div className="rounded-xl border border-rose-600/40 bg-gradient-to-r from-rose-950/60 via-red-950/40 to-zinc-900 p-4 sm:p-5 space-y-3 sm:space-y-4 shadow-lg shadow-rose-950/30">
+                <div className="flex items-center gap-2 text-rose-400 font-extrabold text-xs sm:text-base uppercase tracking-wider">
                   <span>⚡</span>
                   <span>Recordatorio Anti-Excusas</span>
                 </div>
@@ -210,7 +210,7 @@ export function MindsetModal({ isOpen, onClose }: MindsetModalProps) {
                   Si hoy te rajas y cedes, estás escupiendo en la cara de la bestia en la que te estás convirtiendo. Fallar hoy es volver a la casilla de salida, es ser ese tío conformista que se rinde por un triste chute de dopamina barata.
                 </p>
 
-                <div className="rounded-lg border border-rose-500/30 bg-zinc-950/80 p-3.5 text-xs sm:text-sm font-bold text-rose-300 text-center tracking-wide">
+                <div className="rounded-lg border border-rose-500/30 bg-zinc-950/80 p-3 sm:p-3.5 text-xs sm:text-sm font-bold text-rose-300 text-center tracking-wide">
                   ¿Te entra el mono de un cigarro o una copa? ¡Te jodes y aguantas!
                 </div>
 
@@ -220,8 +220,8 @@ export function MindsetModal({ isOpen, onClose }: MindsetModalProps) {
               </div>
 
               {/* Bloque Rock Lee */}
-              <div className="rounded-xl border border-amber-500/30 bg-amber-950/20 p-5 space-y-3">
-                <div className="flex items-center gap-2 text-amber-400 font-bold text-sm">
+              <div className="rounded-xl border border-amber-500/30 bg-amber-950/20 p-4 sm:p-5 space-y-2.5 sm:space-y-3">
+                <div className="flex items-center gap-2 text-amber-400 font-bold text-xs sm:text-sm">
                   <span>🍃</span>
                   <span>Acuérdate de Rock Lee</span>
                 </div>
@@ -231,11 +231,11 @@ export function MindsetModal({ isOpen, onClose }: MindsetModalProps) {
               </div>
 
               {/* Remate final */}
-              <div className="rounded-xl border border-emerald-500/30 bg-gradient-to-br from-emerald-950/40 to-zinc-900 p-5 text-center space-y-2">
+              <div className="rounded-xl border border-emerald-500/30 bg-gradient-to-br from-emerald-950/40 to-zinc-900 p-4 sm:p-5 text-center space-y-2">
                 <p className="text-xs sm:text-sm font-semibold text-zinc-200">
                   Así que aprieta los dientes. Bébete un puto vaso de agua helada, pégate un grito si hace falta, levanta la cabeza y vuelve a agarrar las anillas.
                 </p>
-                <p className="text-sm sm:text-base font-black tracking-wider text-emerald-400 uppercase pt-1">
+                <p className="text-xs sm:text-base font-black tracking-wider text-emerald-400 uppercase pt-1">
                   Tienes 365 días para aniquilar a tu yo del pasado. ¡A REVENTARLO, JODER! 🔥
                 </p>
               </div>
@@ -243,8 +243,8 @@ export function MindsetModal({ isOpen, onClose }: MindsetModalProps) {
           )}
         </div>
 
-        {/* Pie de modal */}
-        <div className="flex flex-wrap items-center justify-between gap-3 border-t border-zinc-800 bg-zinc-950/80 px-5 py-3.5">
+        {/* Pie de modal (shrink-0) */}
+        <div className="flex shrink-0 flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 border-t border-zinc-800 bg-zinc-950/80 px-4 py-3 sm:px-5 sm:py-3.5">
           <label className="flex items-center gap-2 text-xs text-zinc-400 cursor-pointer select-none hover:text-zinc-200">
             <input
               type="checkbox"
@@ -258,7 +258,7 @@ export function MindsetModal({ isOpen, onClose }: MindsetModalProps) {
           <button
             type="button"
             onClick={handleClose}
-            className="rounded-xl bg-gradient-to-r from-amber-600 to-orange-600 px-5 py-2 text-xs font-bold text-white shadow-md shadow-amber-900/30 transition hover:from-amber-500 hover:to-orange-500"
+            className="w-full sm:w-auto rounded-xl bg-gradient-to-r from-amber-600 to-orange-600 px-5 py-2.5 sm:py-2 text-xs font-bold text-white shadow-md shadow-amber-900/30 transition hover:from-amber-500 hover:to-orange-500 text-center"
           >
             Entendido, a darle duro 💪
           </button>
