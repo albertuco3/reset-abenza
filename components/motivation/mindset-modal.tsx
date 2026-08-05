@@ -287,8 +287,8 @@ export function MindsetModal({ isOpen, onClose }: MindsetModalProps) {
                 </div>
 
                 <p className="text-xs leading-relaxed text-zinc-300 sm:text-sm">
-                  Las ganas de rendirte duran cinco putos minutos, pero la hostia
-                  de realidad de mirarte al espejo, ver a un espartano que ha
+                  Las ganas de rendirte duran cinco putos minutos, pero el honor
+                  y la admiración que vas a sentir al mirarte al espejo, ver a un espartano que ha
                   reventado el muro con la puta cabeza y saber que no te has
                   doblegado,{" "}
                   <strong className="text-amber-400">
