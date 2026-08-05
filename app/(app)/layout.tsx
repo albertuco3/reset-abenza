@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { LogoutButton } from "@/components/auth/logout-button";
+import { MindsetWrapper } from "@/components/motivation/mindset-wrapper";
 import { createClient } from "@/lib/supabase/server";
 
 export default async function AppLayout({
@@ -35,7 +36,10 @@ export default async function AppLayout({
             </nav>
           </div>
           {user ? (
-            <LogoutButton />
+            <div className="flex items-center gap-3">
+              <MindsetWrapper autoCheckToday />
+              <LogoutButton />
+            </div>
           ) : (
             <Link
               href="/login"
