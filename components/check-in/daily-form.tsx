@@ -4,12 +4,11 @@ import { useEffect, useMemo, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { useForm, type Resolver } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { saveCheckIn } from "@/lib/actions/check-in";
+import { saveCheckIn, loadCheckInForDate, deleteCheckInDay } from "@/lib/actions/check-in";
 import { completeCardioTrio, paceToMmSs, parseDurationInput } from "@/lib/cardio";
 import {
   SESSION_LABELS,
   SESSION_TYPES,
-  defaultSessionForDate,
   type SessionType,
 } from "@/lib/sessions";
 import {
@@ -18,6 +17,7 @@ import {
   type CheckInParsed,
 } from "@/lib/validations/check-in";
 import { SpanishDatePicker } from "@/components/ui/spanish-date-picker";
+import { formatDisplayDate } from "@/lib/dates";
 
 function Field({
   label,
@@ -40,9 +40,17 @@ function Field({
 const inputClass =
   "h-11 w-full rounded-xl border border-zinc-300 bg-white px-3 text-base text-zinc-900 outline-none focus:border-emerald-700";
 
-export function DailyForm({ defaults }: { defaults: CheckInFormValues }) {
+export function DailyForm({
+  defaults,
+  initiallyExists = false,
+}: {
+  defaults: CheckInFormValues;
+  initiallyExists?: boolean;
+}) {
   const router = useRouter();
   const [pending, startTransition] = useTransition();
+  const [loadingDate, setLoadingDate] = useState(false);
+  const [exists, setExists] = useState(initiallyExists);
   const [feedback, setFeedback] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -55,7 +63,7 @@ export function DailyForm({ defaults }: { defaults: CheckInFormValues }) {
     defaultValues: defaults,
   });
 
-  const { register, watch, setValue, handleSubmit } = form;
+  const { register, watch, setValue, handleSubmit, reset } = form;
   const habitClean = watch("habit_clean");
   const habitTraining = watch("habit_training");
   const entryDate = watch("entry_date");
@@ -65,10 +73,9 @@ export function DailyForm({ defaults }: { defaults: CheckInFormValues }) {
   const durationStr = watch("cardio_duration");
 
   useEffect(() => {
-    if (!defaults.session_type && entryDate) {
-      setValue("session_type", defaultSessionForDate(entryDate));
-    }
-  }, [defaults.session_type, entryDate, setValue]);
+    reset(defaults);
+    setExists(initiallyExists);
+  }, [defaults, initiallyExists, reset]);
 
   const livePace = useMemo(() => {
     const duration = durationStr ? parseDurationInput(durationStr) : null;
@@ -89,11 +96,24 @@ export function DailyForm({ defaults }: { defaults: CheckInFormValues }) {
     }
   }
 
-  function onDateChange(value: string) {
-    setValue("entry_date", value, { shouldDirty: true });
-    // Solo auto-sugerir sesión si el usuario no ha tocado aún un día guardado distinto
-    if (!defaults.entry_date || defaults.entry_date !== value) {
-      onSessionChange(defaultSessionForDate(value));
+  async function onDateChange(value: string) {
+    if (!value || value === entryDate) return;
+    setFeedback(null);
+    setError(null);
+    setLoadingDate(true);
+    try {
+      const loaded = await loadCheckInForDate(value);
+      if (!loaded.ok) {
+        setError(loaded.message);
+        return;
+      }
+      reset(loaded.values);
+      setExists(loaded.exists);
+      router.replace(`/check-in?date=${value}`, { scroll: false });
+    } catch {
+      setError("No se pudo cargar esa fecha.");
+    } finally {
+      setLoadingDate(false);
     }
   }
 
@@ -107,10 +127,41 @@ export function DailyForm({ defaults }: { defaults: CheckInFormValues }) {
           setError(result.message);
           return;
         }
+        setExists(true);
         setFeedback(result.message);
+        router.replace(`/check-in?date=${values.entry_date}`, { scroll: false });
         router.refresh();
       } catch {
         setError("Error al guardar. Revisa la consola o inténtalo de nuevo.");
+      }
+    });
+  }
+
+  function onDelete() {
+    if (!entryDate) return;
+    const ok = window.confirm(
+      `¿Borrar todos los datos del ${formatDisplayDate(entryDate)}? Esta acción no se puede deshacer.`,
+    );
+    if (!ok) return;
+
+    setFeedback(null);
+    setError(null);
+    startTransition(async () => {
+      try {
+        const result = await deleteCheckInDay(entryDate);
+        if (!result.ok) {
+          setError(result.message);
+          return;
+        }
+        const loaded = await loadCheckInForDate(entryDate);
+        if (loaded.ok) {
+          reset(loaded.values);
+          setExists(false);
+        }
+        setFeedback(result.message);
+        router.refresh();
+      } catch {
+        setError("No se pudo borrar el día.");
       }
     });
   }
@@ -125,12 +176,26 @@ export function DailyForm({ defaults }: { defaults: CheckInFormValues }) {
       className="space-y-6 pb-28"
     >
       <section className="space-y-3 rounded-2xl bg-white p-4 ring-1 ring-zinc-200">
-        <h2 className="text-sm font-semibold tracking-wide text-zinc-500 uppercase">
-          Día
-        </h2>
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <h2 className="text-sm font-semibold tracking-wide text-zinc-500 uppercase">
+            Día
+          </h2>
+          {exists ? (
+            <span className="rounded-full bg-amber-100 px-2.5 py-0.5 text-[11px] font-semibold text-amber-800">
+              Editando {entryDate ? formatDisplayDate(entryDate) : ""}
+            </span>
+          ) : null}
+        </div>
         <Field label="Fecha">
-          <SpanishDatePicker value={entryDate} onChange={onDateChange} />
+          <SpanishDatePicker
+            value={entryDate}
+            onChange={onDateChange}
+            className={loadingDate ? "pointer-events-none opacity-60" : undefined}
+          />
         </Field>
+        {loadingDate ? (
+          <p className="text-xs text-zinc-500">Cargando datos del día…</p>
+        ) : null}
         <Field label="Tipo de sesión" hint="Sugerido según el día de la semana; puedes cambiarlo">
           <select
             className={inputClass}
@@ -407,13 +472,25 @@ export function DailyForm({ defaults }: { defaults: CheckInFormValues }) {
       ) : null}
 
       <div className="fixed inset-x-0 bottom-0 z-20 border-t border-zinc-200 bg-white/95 p-4 backdrop-blur">
-        <button
-          type="submit"
-          disabled={pending}
-          className="mx-auto flex h-12 w-full max-w-5xl items-center justify-center rounded-xl bg-emerald-800 text-sm font-semibold text-white disabled:opacity-60"
-        >
-          {pending ? "Guardando…" : "Guardar check-in"}
-        </button>
+        <div className="mx-auto flex w-full max-w-5xl flex-col gap-2 sm:flex-row">
+          {exists ? (
+            <button
+              type="button"
+              disabled={pending || loadingDate}
+              onClick={onDelete}
+              className="flex h-12 items-center justify-center rounded-xl border border-rose-200 bg-rose-50 px-4 text-sm font-semibold text-rose-700 disabled:opacity-60 sm:w-auto"
+            >
+              Borrar día
+            </button>
+          ) : null}
+          <button
+            type="submit"
+            disabled={pending || loadingDate}
+            className="flex h-12 flex-1 items-center justify-center rounded-xl bg-emerald-800 text-sm font-semibold text-white disabled:opacity-60"
+          >
+            {pending ? "Guardando…" : exists ? "Actualizar check-in" : "Guardar check-in"}
+          </button>
+        </div>
       </div>
     </form>
   );

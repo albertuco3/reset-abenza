@@ -12,6 +12,10 @@ import {
   YAxis,
 } from "recharts";
 import type { EmomExercise } from "@/lib/types";
+import {
+  fullDateFromChartClick,
+  useCheckInNavigation,
+} from "@/lib/navigation/check-in";
 
 export function EmomChart({
   data,
@@ -23,16 +27,17 @@ export function EmomChart({
     duration_minutes: number;
   }[];
 }) {
+  const goToCheckIn = useCheckInNavigation();
   const series = useMemo(() => {
     const byDate = new Map<
       string,
-      { date: string; pull_up?: number; push_up?: number; tip: string }
+      { date: string; fullDate: string; pull_up?: number; push_up?: number }
     >();
 
     for (const row of data) {
       const current = byDate.get(row.entry_date) ?? {
         date: row.entry_date.slice(5),
-        tip: row.entry_date,
+        fullDate: row.entry_date,
       };
       current[row.exercise] = row.total_reps;
       byDate.set(row.entry_date, current);
@@ -48,7 +53,8 @@ export function EmomChart({
       <div className="mb-3">
         <h2 className="text-base font-semibold text-zinc-900">EMOM</h2>
         <p className="text-xs text-zinc-500">
-          Reps totales por bloque (dominadas / flexiones en anillas)
+          Reps totales por bloque (dominadas / flexiones en anillas) · toca
+          para editar
         </p>
       </div>
       {series.length === 0 ? (
@@ -56,9 +62,15 @@ export function EmomChart({
           Sin EMOM registrados.
         </p>
       ) : (
-        <div className="h-56 w-full">
+        <div className="h-56 w-full cursor-pointer">
           <ResponsiveContainer>
-            <LineChart data={series}>
+            <LineChart
+              data={series}
+              onClick={(state) => {
+                const date = fullDateFromChartClick(state, series);
+                if (date) goToCheckIn(date);
+              }}
+            >
               <CartesianGrid strokeDasharray="3 3" stroke="#e4e4e7" />
               <XAxis dataKey="date" tick={{ fontSize: 11 }} />
               <YAxis tick={{ fontSize: 11 }} width={36} />

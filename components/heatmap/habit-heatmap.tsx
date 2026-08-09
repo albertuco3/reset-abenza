@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { buildHeatmapGrid, formatDisplayDate, getResetYearRange } from "@/lib/dates";
+import { useCheckInNavigation } from "@/lib/navigation/check-in";
 import type { DailyEntry } from "@/lib/types";
 
 type HabitKey = "habit_clean" | "habit_training";
@@ -20,6 +21,7 @@ export function HabitHeatmap({
   entries: DailyEntry[];
   resetStartDate: string;
 }) {
+  const goToCheckIn = useCheckInNavigation();
   const { startDate, endDate } = getResetYearRange(resetStartDate);
   const [tip, setTip] = useState<string | null>(null);
 
@@ -41,7 +43,9 @@ export function HabitHeatmap({
           <h2 className="text-base font-semibold text-zinc-900">
             {LABELS[habit]}
           </h2>
-          <p className="text-xs text-zinc-500">Heatmap del año de reset</p>
+          <p className="text-xs text-zinc-500">
+            Heatmap del año de reset · toca un día para editar
+          </p>
         </div>
         <div className="flex items-center gap-2 text-[10px] text-zinc-500">
           <span className="inline-flex items-center gap-1">
@@ -81,8 +85,8 @@ export function HabitHeatmap({
                   <button
                     key={cell.date}
                     type="button"
-                    title={cell.date}
-                    className={`h-3 w-3 rounded-[3px] ${color}`}
+                    title={`${cell.date} · editar`}
+                    className={`h-3 w-3 rounded-[3px] ${color} transition hover:ring-2 hover:ring-emerald-700/50`}
                     onMouseEnter={() =>
                       setTip(
                         `${formatDisplayDate(cell.date!)} · ${
@@ -91,10 +95,11 @@ export function HabitHeatmap({
                             : value
                               ? "sí"
                               : "no"
-                        }`,
+                        } · tocar para editar`,
                       )
                     }
                     onMouseLeave={() => setTip(null)}
+                    onClick={() => goToCheckIn(cell.date!)}
                   />
                 );
               })}

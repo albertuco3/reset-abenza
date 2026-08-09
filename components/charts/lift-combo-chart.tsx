@@ -14,6 +14,10 @@ import {
 } from "recharts";
 import type { StrengthExercise } from "@/lib/types";
 import type { TrainingModality } from "@/lib/sessions";
+import {
+  fullDateFromChartClick,
+  useCheckInNavigation,
+} from "@/lib/navigation/check-in";
 
 type Row = {
   entry_date: string;
@@ -42,6 +46,7 @@ export function LiftComboChart({
   showWeight?: boolean;
   showReps?: boolean;
 }) {
+  const goToCheckIn = useCheckInNavigation();
   const series = useMemo(
     () =>
       data
@@ -64,16 +69,24 @@ export function LiftComboChart({
     <section className="rounded-2xl bg-white p-4 ring-1 ring-zinc-200">
       <div className="mb-3">
         <h2 className="text-base font-semibold text-zinc-900">{title}</h2>
-        <p className="text-xs text-zinc-500">{subtitle}</p>
+        <p className="text-xs text-zinc-500">
+          {subtitle} · toca un punto para editar
+        </p>
       </div>
       {!hasData ? (
         <p className="flex h-40 items-center justify-center text-sm text-zinc-500">
           Sin datos aún.
         </p>
       ) : (
-        <div className="h-56 w-full">
+        <div className="h-56 w-full cursor-pointer">
           <ResponsiveContainer>
-            <ComposedChart data={series}>
+            <ComposedChart
+              data={series}
+              onClick={(state) => {
+                const date = fullDateFromChartClick(state, series);
+                if (date) goToCheckIn(date);
+              }}
+            >
               <CartesianGrid strokeDasharray="3 3" stroke="#e4e4e7" />
               <XAxis dataKey="date" tick={{ fontSize: 11 }} />
               {showWeight ? (

@@ -1,10 +1,18 @@
 import { DailyForm } from "@/components/check-in/daily-form";
 import { MindsetWrapper } from "@/components/motivation/mindset-wrapper";
-import { getCheckInDefaults } from "@/lib/data/check-in";
+import { getCheckInLoad } from "@/lib/data/check-in";
 import { todayInMadrid } from "@/lib/dates";
 
-export default async function CheckInPage() {
-  const defaults = await getCheckInDefaults(todayInMadrid());
+type Props = {
+  searchParams: Promise<{ date?: string }>;
+};
+
+export default async function CheckInPage({ searchParams }: Props) {
+  const params = await searchParams;
+  const raw = params.date;
+  const entryDate =
+    raw && /^\d{4}-\d{2}-\d{2}$/.test(raw) ? raw : todayInMadrid();
+  const { values, exists } = await getCheckInLoad(entryDate);
 
   return (
     <main>
@@ -14,12 +22,14 @@ export default async function CheckInPage() {
             Check-in
           </h1>
           <p className="mt-1 text-sm text-zinc-600">
-            Volcado diario en menos de un minuto.
+            {exists
+              ? "Editando un día ya registrado."
+              : "Volcado diario en menos de un minuto."}
           </p>
         </div>
         <MindsetWrapper label="Manifiesto & Mindset 🔥" />
       </div>
-      <DailyForm defaults={defaults} />
+      <DailyForm defaults={values} initiallyExists={exists} />
     </main>
   );
 }

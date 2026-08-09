@@ -5,7 +5,8 @@ import { completeCardioTrio, parseDurationInput } from "@/lib/cardio";
 import { createClient } from "@/lib/supabase/server";
 import type { EmomExercise, StrengthExercise } from "@/lib/types";
 import type { TrainingModality } from "@/lib/sessions";
-import { checkInSchema, type CheckInParsed } from "@/lib/validations/check-in";
+import { checkInSchema, type CheckInFormValues, type CheckInParsed } from "@/lib/validations/check-in";
+import { getCheckInLoad } from "@/lib/data/check-in";
 
 export type CheckInState = {
   ok: boolean;
@@ -226,4 +227,49 @@ export async function saveCheckIn(raw: unknown): Promise<CheckInState> {
   revalidatePath("/");
   revalidatePath("/check-in");
   return { ok: true, message: "Guardado." };
+}
+
+export async function loadCheckInForDate(
+  entryDate: string,
+): Promise<
+  | { ok: true; values: CheckInFormValues; exists: boolean }
+  | { ok: false; message: string }
+> {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(entryDate)) {
+    return { ok: false, message: "Fecha inválida." };
+  }
+
+  const loaded = await getCheckInLoad(entryDate);
+  return { ok: true, values: loaded.values, exists: loaded.exists };
+}
+
+export async function deleteCheckInDay(
+  entryDate: string,
+): Promise<CheckInState> {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(entryDate)) {
+    return { ok: false, message: "Fecha inválida." };
+  }
+
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    return { ok: false, message: "Sesión expirada. Vuelve a entrar." };
+  }
+
+  const { error } = await supabase
+    .from("daily_entries")
+    .delete()
+    .eq("user_id", user.id)
+    .eq("entry_date", entryDate);
+
+  if (error) {
+    return { ok: false, message: error.message };
+  }
+
+  revalidatePath("/");
+  revalidatePath("/check-in");
+  return { ok: true, message: "Día borrado." };
 }

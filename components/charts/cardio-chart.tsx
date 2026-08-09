@@ -13,6 +13,10 @@ import {
   YAxis,
 } from "recharts";
 import { formatDuration, paceToMmSs } from "@/lib/cardio";
+import {
+  fullDateFromChartClick,
+  useCheckInNavigation,
+} from "@/lib/navigation/check-in";
 
 export function CardioChart({
   data,
@@ -24,6 +28,7 @@ export function CardioChart({
     pace_min_per_km: number;
   }[];
 }) {
+  const goToCheckIn = useCheckInNavigation();
   const [minKm, setMinKm] = useState(0);
 
   const sorted = useMemo(
@@ -63,7 +68,7 @@ export function CardioChart({
         <div>
           <h2 className="text-base font-semibold text-zinc-900">Cardio</h2>
           <p className="text-xs text-zinc-500">
-            Barras = km · línea = ritmo (min/km)
+            Barras = km · línea = ritmo (min/km) · toca para editar
           </p>
         </div>
         <label className="flex items-center gap-2 text-xs text-zinc-600">
@@ -95,9 +100,15 @@ export function CardioChart({
           Sin salidas registradas.
         </p>
       ) : (
-        <div className="h-64 w-full">
+        <div className="h-64 w-full cursor-pointer">
           <ResponsiveContainer>
-            <ComposedChart data={series}>
+            <ComposedChart
+              data={series}
+              onClick={(state) => {
+                const date = fullDateFromChartClick(state, series);
+                if (date) goToCheckIn(date);
+              }}
+            >
               <CartesianGrid strokeDasharray="3 3" stroke="#e4e4e7" />
               <XAxis dataKey="date" tick={{ fontSize: 11 }} />
               <YAxis
