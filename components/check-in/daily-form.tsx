@@ -472,13 +472,13 @@ export function DailyForm({
       ) : null}
 
       <div className="fixed inset-x-0 bottom-0 z-20 border-t border-zinc-200 bg-white/95 p-4 backdrop-blur">
-        <div className="mx-auto flex w-full max-w-5xl flex-col gap-2 sm:flex-row">
+        <div className="mx-auto flex w-full max-w-5xl flex-col-reverse gap-2 sm:flex-row sm:items-stretch">
           {exists ? (
             <button
               type="button"
               disabled={pending || loadingDate}
               onClick={onDelete}
-              className="flex h-12 items-center justify-center rounded-xl border border-rose-200 bg-rose-50 px-4 text-sm font-semibold text-rose-700 disabled:opacity-60 sm:w-auto"
+              className="flex h-14 w-full shrink-0 items-center justify-center rounded-xl border border-rose-200 bg-rose-50 px-4 text-sm font-semibold text-rose-700 disabled:opacity-60 sm:w-auto"
             >
               Borrar día
             </button>
@@ -486,7 +486,7 @@ export function DailyForm({
           <button
             type="submit"
             disabled={pending || loadingDate}
-            className="flex h-12 flex-1 items-center justify-center rounded-xl bg-emerald-800 text-sm font-semibold text-white disabled:opacity-60"
+            className="flex h-14 w-full items-center justify-center rounded-xl bg-emerald-800 text-sm font-semibold text-white disabled:opacity-60 sm:flex-1"
           >
             {pending ? "Guardando…" : exists ? "Actualizar check-in" : "Guardar check-in"}
           </button>
