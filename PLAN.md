@@ -13,19 +13,19 @@
 |--------|------------------|---------------|
 | Hábitos | Limpio (0 alcohol / 0 tabaco), Entrenamiento completado | Heatmap tipo GitHub (365 días) |
 | Sesión | Selector diario (rutina semanal); inputs según tipo | — |
-| Pierna | Sentadilla kg + reps (fuerza o hipertrofia) | Combo kg + reps por modalidad |
+| Pierna | Sentadilla búlgara kg + reps (fuerza o hipertrofia) | Combo kg + reps por modalidad |
 | Torso fuerza | Dominadas lastradas (kg lastre + reps) | Combo lastre + reps |
 | Torso hipertrofia | Clásico (reps 1ª serie) o EMOM | Reps clásico + chart EMOM |
-| EMOM | Totales 30' dominadas / flexiones (dentro de torso hipertrofia) | Líneas de volumen |
+| EMOM | Totales 30' dominadas / flexiones en anillas (dentro de torso hipertrofia) | Líneas de volumen |
 | Cardio | Distancia (km) + duración + ritmo (min/km) | Volumen + ritmo combinados (ver §1.2) |
 | Recuperación | Sueño (1–10), energía (1–10) | Líneas de tendencia |
 
-### 1.1 Protocolo EMOM (dominadas + flexiones)
+### 1.1 Protocolo EMOM (dominadas + flexiones en anillas)
 
 En un mismo entrenamiento EMOM se hacen **dos bloques consecutivos**:
 
 1. **Dominadas:** 1 serie cada minuto durante **30 minutos** (30 series).
-2. **Flexiones:** 1 serie cada minuto durante **30 minutos** (30 series).
+2. **Flexiones en anillas:** 1 serie cada minuto durante **30 minutos** (30 series).
 
 **Qué se guarda en el MVP:** repeticiones **totales** de cada bloque (suma de las 30 series). Es el KPI de progresión y cabe en el check-in rápido (2 campos numéricos).  
 **Post-MVP (opcional):** array de reps por minuto (curva de fatiga dentro del EMOM).

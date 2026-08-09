@@ -49,14 +49,14 @@ export default async function DashboardPage() {
       />
 
       <LiftComboChart
-        title="Sentadilla · Fuerza"
+        title="Sentadilla búlgara · Fuerza"
         subtitle="Barras = kg · línea = reps (1ª serie)"
         exercise="squat"
         modality="strength"
         data={data.strength}
       />
       <LiftComboChart
-        title="Sentadilla · Hipertrofia"
+        title="Sentadilla búlgara · Hipertrofia"
         subtitle="Barras = kg · línea = reps (1ª serie)"
         exercise="squat"
         modality="hypertrophy"
@@ -80,7 +80,7 @@ export default async function DashboardPage() {
         showReps
       />
       <LiftComboChart
-        title="Flexiones · Hipertrofia (clásico)"
+        title="Flexiones en anillas · Hipertrofia (clásico)"
         subtitle="Reps de la 1ª serie"
         exercise="push_up"
         modality="hypertrophy"

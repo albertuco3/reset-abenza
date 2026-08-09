@@ -87,7 +87,7 @@ export async function saveCheckIn(raw: unknown): Promise<CheckInState> {
       data.session_type === "leg_strength" ? "strength" : "hypertrophy";
     if (data.squat_kg != null || data.squat_reps != null) {
       if (data.squat_kg == null) {
-        return { ok: false, message: "Sentadilla: indica los kilos." };
+        return { ok: false, message: "Sentadilla búlgara: indica los kilos." };
       }
       strengthRows.push({
         daily_entry_id: entry.id,

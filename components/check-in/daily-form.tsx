@@ -212,7 +212,7 @@ export function DailyForm({ defaults }: { defaults: CheckInFormValues }) {
         sessionType === "leg_hypertrophy") && (
         <section className="space-y-3 rounded-2xl bg-white p-4 ring-1 ring-zinc-200">
           <h2 className="text-sm font-semibold tracking-wide text-zinc-500 uppercase">
-            Sentadilla ·{" "}
+            Sentadilla búlgara ·{" "}
             {sessionType === "leg_strength" ? "Fuerza" : "Hipertrofia"}
           </h2>
           <div className="grid grid-cols-2 gap-3">
@@ -305,7 +305,7 @@ export function DailyForm({ defaults }: { defaults: CheckInFormValues }) {
                   {...register("pull_up_reps", { valueAsNumber: true })}
                 />
               </Field>
-              <Field label="Flexiones" hint="Reps 1ª serie">
+              <Field label="Flexiones en anillas" hint="Reps 1ª serie">
                 <input
                   inputMode="numeric"
                   className={inputClass}
@@ -328,7 +328,7 @@ export function DailyForm({ defaults }: { defaults: CheckInFormValues }) {
                     {...register("emom_pull_up_reps", { valueAsNumber: true })}
                   />
                 </Field>
-                <Field label="Flexiones (total)">
+                <Field label="Flexiones anillas (total)">
                   <input
                     inputMode="numeric"
                     className={inputClass}

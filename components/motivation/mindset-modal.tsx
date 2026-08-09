@@ -215,7 +215,7 @@ export function MindsetModal({ isOpen, onClose }: MindsetModalProps) {
                         Creación de músculo real:
                       </strong>{" "}
                       Sin alcohol bloqueando la síntesis proteica, cada
-                      sentadilla, remo pesado y fondo en anillas será hipertrofia
+                      sentadilla búlgara, remo pesado y fondo en anillas será hipertrofia
                       real.
                     </li>
                     <li>

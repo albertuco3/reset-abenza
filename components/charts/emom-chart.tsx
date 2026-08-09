@@ -48,7 +48,7 @@ export function EmomChart({
       <div className="mb-3">
         <h2 className="text-base font-semibold text-zinc-900">EMOM</h2>
         <p className="text-xs text-zinc-500">
-          Reps totales por bloque (dominadas / flexiones)
+          Reps totales por bloque (dominadas / flexiones en anillas)
         </p>
       </div>
       {series.length === 0 ? (
@@ -75,7 +75,7 @@ export function EmomChart({
               <Line
                 type="monotone"
                 dataKey="push_up"
-                name="Flexiones"
+                name="Flexiones anillas"
                 stroke="#3f6212"
                 strokeWidth={2}
                 connectNulls
