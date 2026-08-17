@@ -13,6 +13,8 @@ function emptyValues(entryDate: string): CheckInFormValues {
     entry_date: entryDate,
     habit_clean: false,
     habit_training: false,
+    habit_meditation: false,
+    habit_reading: false,
     session_type: defaultSessionForDate(entryDate),
     torso_hypertrophy_mode: "emom",
     sleep_quality: undefined,
@@ -73,6 +75,8 @@ export async function getCheckInLoad(entryDate: string): Promise<CheckInLoad> {
       entry_date: entry.entry_date,
       habit_clean: entry.habit_clean,
       habit_training: entry.habit_training,
+      habit_meditation: entry.habit_meditation ?? false,
+      habit_reading: entry.habit_reading ?? false,
       session_type: sessionType,
       torso_hypertrophy_mode:
         entry.torso_hypertrophy_mode ??

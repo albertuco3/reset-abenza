@@ -19,6 +19,8 @@ export const checkInSchema = z
     entry_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
     habit_clean: z.boolean(),
     habit_training: z.boolean(),
+    habit_meditation: z.boolean(),
+    habit_reading: z.boolean(),
     session_type: z.enum(SESSION_TYPES),
     torso_hypertrophy_mode: z.enum(["classic", "emom"]).optional(),
     sleep_quality: optNumber(z.number().int().min(1).max(10)),

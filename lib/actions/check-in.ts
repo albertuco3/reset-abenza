@@ -49,6 +49,8 @@ export async function saveCheckIn(raw: unknown): Promise<CheckInState> {
         entry_date: data.entry_date,
         habit_clean: data.habit_clean,
         habit_training: habitTraining,
+        habit_meditation: data.habit_meditation,
+        habit_reading: data.habit_reading,
         session_type: data.session_type,
         torso_hypertrophy_mode:
           data.session_type === "torso_hypertrophy"

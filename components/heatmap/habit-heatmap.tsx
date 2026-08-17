@@ -5,11 +5,17 @@ import { buildHeatmapGrid, formatDisplayDate, getResetYearRange } from "@/lib/da
 import { useCheckInNavigation } from "@/lib/navigation/check-in";
 import type { DailyEntry } from "@/lib/types";
 
-type HabitKey = "habit_clean" | "habit_training";
+type HabitKey =
+  | "habit_clean"
+  | "habit_training"
+  | "habit_meditation"
+  | "habit_reading";
 
 const LABELS: Record<HabitKey, string> = {
   habit_clean: "Limpio",
   habit_training: "Entrenamiento",
+  habit_meditation: "Meditación",
+  habit_reading: "Lectura",
 };
 
 export function HabitHeatmap({

@@ -66,6 +66,8 @@ export function DailyForm({
   const { register, watch, setValue, handleSubmit, reset } = form;
   const habitClean = watch("habit_clean");
   const habitTraining = watch("habit_training");
+  const habitMeditation = watch("habit_meditation");
+  const habitReading = watch("habit_reading");
   const entryDate = watch("entry_date");
   const sessionType = watch("session_type") as SessionType;
   const torsoMode = watch("torso_hypertrophy_mode");
@@ -215,7 +217,7 @@ export function DailyForm({
         <h2 className="text-sm font-semibold tracking-wide text-zinc-500 uppercase">
           Hábitos
         </h2>
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
           <button
             type="button"
             onClick={() => setValue("habit_clean", !habitClean, { shouldDirty: true })}
@@ -244,6 +246,40 @@ export function DailyForm({
             Entrenamiento
             <span className="mt-1 block text-xs font-normal opacity-80">
               Completado
+            </span>
+          </button>
+          <button
+            type="button"
+            onClick={() =>
+              setValue("habit_meditation", !habitMeditation, {
+                shouldDirty: true,
+              })
+            }
+            className={`min-h-20 rounded-2xl px-3 py-4 text-sm font-semibold transition ${
+              habitMeditation
+                ? "bg-emerald-700 text-white"
+                : "bg-zinc-100 text-zinc-600 ring-1 ring-zinc-200"
+            }`}
+          >
+            Meditación
+            <span className="mt-1 block text-xs font-normal opacity-80">
+              Completada
+            </span>
+          </button>
+          <button
+            type="button"
+            onClick={() =>
+              setValue("habit_reading", !habitReading, { shouldDirty: true })
+            }
+            className={`min-h-20 rounded-2xl px-3 py-4 text-sm font-semibold transition ${
+              habitReading
+                ? "bg-emerald-700 text-white"
+                : "bg-zinc-100 text-zinc-600 ring-1 ring-zinc-200"
+            }`}
+          >
+            Lectura
+            <span className="mt-1 block text-xs font-normal opacity-80">
+              Completada
             </span>
           </button>
         </div>

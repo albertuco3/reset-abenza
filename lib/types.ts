@@ -19,6 +19,8 @@ export type DailyEntry = {
   entry_date: string;
   habit_clean: boolean;
   habit_training: boolean;
+  habit_meditation: boolean;
+  habit_reading: boolean;
   session_type: SessionType | null;
   torso_hypertrophy_mode: TorsoHypertrophyMode | null;
   resting_hr: number | null;

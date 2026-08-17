@@ -47,6 +47,16 @@ export default async function DashboardPage() {
         entries={data.entries}
         resetStartDate={data.resetStartDate}
       />
+      <HabitHeatmap
+        habit="habit_meditation"
+        entries={data.entries}
+        resetStartDate={data.resetStartDate}
+      />
+      <HabitHeatmap
+        habit="habit_reading"
+        entries={data.entries}
+        resetStartDate={data.resetStartDate}
+      />
 
       <LiftComboChart
         title="Sentadilla búlgara · Fuerza"

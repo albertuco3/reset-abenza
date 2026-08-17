@@ -27,12 +27,15 @@ begin
 
     insert into public.daily_entries (
       user_id, entry_date, habit_clean, habit_training,
+      habit_meditation, habit_reading,
       session_type, torso_hypertrophy_mode,
       sleep_quality, energy_level, notes
     ) values (
       uid, d,
       (i % 5 <> 0),
       (sess <> 'rest'),
+      (i >= 15),
+      (i >= 15),
       sess,
       case when sess = 'torso_hypertrophy' then
         case when i % 2 = 0 then 'emom' else 'classic' end
@@ -44,6 +47,8 @@ begin
     on conflict (user_id, entry_date) do update set
       habit_clean = excluded.habit_clean,
       habit_training = excluded.habit_training,
+      habit_meditation = excluded.habit_meditation,
+      habit_reading = excluded.habit_reading,
       session_type = excluded.session_type,
       torso_hypertrophy_mode = excluded.torso_hypertrophy_mode,
       sleep_quality = excluded.sleep_quality,
