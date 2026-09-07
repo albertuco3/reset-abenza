@@ -4,7 +4,7 @@ import { LiftComboChart } from "@/components/charts/lift-combo-chart";
 import { RecoveryCharts } from "@/components/charts/recovery-charts";
 import { HabitHeatmap } from "@/components/heatmap/habit-heatmap";
 import { getDashboardData } from "@/lib/data/dashboard";
-import { formatDisplayDate } from "@/lib/dates";
+import { formatDisplayDate, getCleanStreakStats } from "@/lib/dates";
 import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
 
@@ -14,6 +14,8 @@ export default async function DashboardPage() {
   const {
     data: { user },
   } = await supabase.auth.getUser();
+
+  const cleanStats = getCleanStreakStats(data.entries, data.resetStartDate);
 
   return (
     <main className="space-y-5">
@@ -37,11 +39,30 @@ export default async function DashboardPage() {
         ) : null}
       </div>
 
-      <HabitHeatmap
-        habit="habit_clean"
-        entries={data.entries}
-        resetStartDate={data.resetStartDate}
-      />
+      <div className="space-y-2">
+        <div className="flex items-center justify-between">
+          <div className="inline-flex items-center gap-2 text-sm font-medium text-zinc-700">
+            <span className="flex h-2 w-2 rounded-full bg-emerald-600 ring-4 ring-emerald-100" />
+            <span>
+              Llevas{" "}
+              <strong className="text-sm font-bold text-emerald-800">
+                {cleanStats.streak} {cleanStats.streak === 1 ? "día" : "días"} limpio
+              </strong>
+              {cleanStats.totalClean > cleanStats.streak && (
+                <span className="ml-1.5 text-xs text-zinc-500">
+                  ({cleanStats.totalClean} acumulados)
+                </span>
+              )}
+            </span>
+          </div>
+        </div>
+
+        <HabitHeatmap
+          habit="habit_clean"
+          entries={data.entries}
+          resetStartDate={data.resetStartDate}
+        />
+      </div>
       <HabitHeatmap
         habit="habit_training"
         entries={data.entries}
