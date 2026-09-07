@@ -17,8 +17,10 @@ export function todayInMadrid(): string {
   return formatInTimeZone(new Date(), APP_TZ, "yyyy-MM-dd");
 }
 
+export const RESET_START_DATE = "2026-07-25";
+
 export function getResetStartDate(): string {
-  return process.env.NEXT_PUBLIC_RESET_START_DATE ?? "2026-07-25";
+  return RESET_START_DATE;
 }
 
 /** Rango del heatmap: desde RESET_START_DATE hasta +364 días (año de reset). */
