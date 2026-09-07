@@ -26,7 +26,8 @@ export function MindsetWrapper({
     const dismissedDate = localStorage.getItem("reset_mindset_dismissed_date");
 
     if (dismissedDate !== todayISO) {
-      setIsOpen(true);
+      const timer = setTimeout(() => setIsOpen(true), 0);
+      return () => clearTimeout(timer);
     }
   }, [autoCheckToday]);
 

@@ -1,7 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useSyncExternalStore } from "react";
 import { createPortal } from "react-dom";
+
+const emptySubscribe = () => () => {};
 
 type TabType = "inventory" | "espartano";
 
@@ -13,11 +15,7 @@ interface MindsetModalProps {
 export function MindsetModal({ isOpen, onClose }: MindsetModalProps) {
   const [activeTab, setActiveTab] = useState<TabType>("inventory");
   const [dontShowToday, setDontShowToday] = useState(false);
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  const mounted = useSyncExternalStore(emptySubscribe, () => true, () => false);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
