@@ -47,6 +47,9 @@ export async function getDashboardData(): Promise<DashboardData> {
       ...(s as StrengthLog),
       weight_kg: s.weight_kg != null ? Number(s.weight_kg) : null,
       reps: s.reps != null ? Number(s.reps) : null,
+      reps_per_set: Array.isArray(s.reps_per_set)
+        ? s.reps_per_set.map((n: unknown) => Number(n))
+        : null,
       modality: (s.modality ?? "strength") as TrainingModality,
       entry_date: dateById[s.daily_entry_id],
     })),

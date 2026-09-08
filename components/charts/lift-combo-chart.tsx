@@ -25,6 +25,7 @@ type Row = {
   modality: TrainingModality;
   weight_kg: number | null;
   reps: number | null;
+  reps_per_set: number[] | null;
 };
 
 export function LiftComboChart({
@@ -57,6 +58,10 @@ export function LiftComboChart({
           fullDate: d.entry_date,
           kg: d.weight_kg,
           reps: d.reps,
+          sets:
+            Array.isArray(d.reps_per_set) && d.reps_per_set.length === 4
+              ? d.reps_per_set
+              : null,
         })),
     [data, exercise, modality],
   );
@@ -124,7 +129,13 @@ export function LiftComboChart({
                           {weightLabel}: {row.kg}
                         </p>
                       ) : null}
-                      {row.reps != null ? <p>Reps: {row.reps}</p> : null}
+                      {row.sets ? (
+                        <p>
+                          Reps: {row.sets.join("+")} = {row.reps}
+                        </p>
+                      ) : row.reps != null ? (
+                        <p>Reps: {row.reps}</p>
+                      ) : null}
                     </div>
                   );
                 }}

@@ -12,7 +12,7 @@ export default async function CheckInPage({ searchParams }: Props) {
   const raw = params.date;
   const entryDate =
     raw && /^\d{4}-\d{2}-\d{2}$/.test(raw) ? raw : todayInMadrid();
-  const { values, exists } = await getCheckInLoad(entryDate);
+  const { values, exists, recommendations } = await getCheckInLoad(entryDate);
 
   return (
     <main>
@@ -29,7 +29,11 @@ export default async function CheckInPage({ searchParams }: Props) {
         </div>
         <MindsetWrapper label="Manifiesto & Mindset 🔥" />
       </div>
-      <DailyForm defaults={values} initiallyExists={exists} />
+      <DailyForm
+        defaults={values}
+        initiallyExists={exists}
+        recommendations={recommendations}
+      />
     </main>
   );
 }

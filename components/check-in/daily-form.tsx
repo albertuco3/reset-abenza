@@ -2,10 +2,16 @@
 
 import { useEffect, useMemo, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { useForm, type Resolver } from "react-hook-form";
+import { useForm, type Resolver, type UseFormRegister } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { saveCheckIn, loadCheckInForDate, deleteCheckInDay } from "@/lib/actions/check-in";
 import { completeCardioTrio, paceToMmSs, parseDurationInput } from "@/lib/cardio";
+import {
+  formatRecommendation,
+  SET_SLOTS,
+  type StrengthRecommendation,
+  type StrengthRecommendations,
+} from "@/lib/progression";
 import {
   SESSION_LABELS,
   SESSION_TYPES,
@@ -15,6 +21,7 @@ import {
   checkInSchema,
   type CheckInFormValues,
   type CheckInParsed,
+  type SetPrefix,
 } from "@/lib/validations/check-in";
 import { SpanishDatePicker } from "@/components/ui/spanish-date-picker";
 import { formatDisplayDate } from "@/lib/dates";
@@ -40,17 +47,76 @@ function Field({
 const inputClass =
   "h-11 w-full rounded-xl border border-zinc-300 bg-white px-3 text-base text-zinc-900 outline-none focus:border-emerald-700";
 
+type SetFieldName = `${SetPrefix}_${(typeof SET_SLOTS)[number]}`;
+
+function asOptNumber(value: unknown): number | undefined {
+  return typeof value === "number" && !Number.isNaN(value) ? value : undefined;
+}
+
+function RecommendationHint({ rec }: { rec: StrengthRecommendation | null }) {
+  if (!rec) return null;
+  return (
+    <p className="rounded-xl bg-emerald-50 px-3 py-2 text-sm text-emerald-900">
+      {formatRecommendation(rec)}
+    </p>
+  );
+}
+
+function SetsFields({
+  prefix,
+  register,
+  values,
+}: {
+  prefix: SetPrefix;
+  register: UseFormRegister<CheckInFormValues>;
+  values: unknown[];
+}) {
+  const numbers = values.map(asOptNumber);
+  const complete = numbers.every((value) => value != null);
+  const total = complete
+    ? numbers.reduce<number>((sum, value) => sum + (value ?? 0), 0)
+    : null;
+
+  return (
+    <div className="space-y-2">
+      <div className="grid grid-cols-4 gap-2">
+        {SET_SLOTS.map((slot) => {
+          const name: SetFieldName = `${prefix}_${slot}`;
+          return (
+            <Field key={name} label={`S${slot}`}>
+              <input
+                inputMode="numeric"
+                className={inputClass}
+                {...register(name, { valueAsNumber: true })}
+              />
+            </Field>
+          );
+        })}
+      </div>
+      <p className="text-sm text-zinc-600">
+        Total:{" "}
+        <span className="font-semibold text-zinc-900">
+          {complete ? `${numbers.join("+")} = ${total}` : "—"}
+        </span>
+      </p>
+    </div>
+  );
+}
+
 export function DailyForm({
   defaults,
   initiallyExists = false,
+  recommendations: initialRecommendations,
 }: {
   defaults: CheckInFormValues;
   initiallyExists?: boolean;
+  recommendations: StrengthRecommendations;
 }) {
   const router = useRouter();
   const [pending, startTransition] = useTransition();
   const [loadingDate, setLoadingDate] = useState(false);
   const [exists, setExists] = useState(initiallyExists);
+  const [recommendations, setRecommendations] = useState(initialRecommendations);
   const [feedback, setFeedback] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -73,11 +139,30 @@ export function DailyForm({
   const torsoMode = watch("torso_hypertrophy_mode");
   const distance = watch("cardio_distance_km");
   const durationStr = watch("cardio_duration");
+  const squatSets = [
+    watch("squat_set_1"),
+    watch("squat_set_2"),
+    watch("squat_set_3"),
+    watch("squat_set_4"),
+  ];
+  const pullUpSets = [
+    watch("pull_up_set_1"),
+    watch("pull_up_set_2"),
+    watch("pull_up_set_3"),
+    watch("pull_up_set_4"),
+  ];
+  const pushUpSets = [
+    watch("push_up_set_1"),
+    watch("push_up_set_2"),
+    watch("push_up_set_3"),
+    watch("push_up_set_4"),
+  ];
 
   useEffect(() => {
     reset(defaults);
     setExists(initiallyExists);
-  }, [defaults, initiallyExists, reset]);
+    setRecommendations(initialRecommendations);
+  }, [defaults, initiallyExists, initialRecommendations, reset]);
 
   const livePace = useMemo(() => {
     const duration = durationStr ? parseDurationInput(durationStr) : null;
@@ -111,6 +196,7 @@ export function DailyForm({
       }
       reset(loaded.values);
       setExists(loaded.exists);
+      setRecommendations(loaded.recommendations);
       router.replace(`/check-in?date=${value}`, { scroll: false });
     } catch {
       setError("No se pudo cargar esa fecha.");
@@ -159,6 +245,7 @@ export function DailyForm({
         if (loaded.ok) {
           reset(loaded.values);
           setExists(false);
+          setRecommendations(loaded.recommendations);
         }
         setFeedback(result.message);
         router.refresh();
@@ -316,22 +403,25 @@ export function DailyForm({
             Sentadilla búlgara ·{" "}
             {sessionType === "leg_strength" ? "Fuerza" : "Hipertrofia"}
           </h2>
-          <div className="grid grid-cols-2 gap-3">
-            <Field label="Kilos">
-              <input
-                inputMode="decimal"
-                className={inputClass}
-                {...register("squat_kg", { valueAsNumber: true })}
-              />
-            </Field>
-            <Field label="Reps (1ª serie)">
-              <input
-                inputMode="numeric"
-                className={inputClass}
-                {...register("squat_reps", { valueAsNumber: true })}
-              />
-            </Field>
-          </div>
+          <RecommendationHint
+            rec={
+              sessionType === "leg_strength"
+                ? recommendations.squat_strength
+                : recommendations.squat_hypertrophy
+            }
+          />
+          <Field label="Kilos">
+            <input
+              inputMode="decimal"
+              className={inputClass}
+              {...register("squat_kg", { valueAsNumber: true })}
+            />
+          </Field>
+          <SetsFields
+            prefix="squat_set"
+            register={register}
+            values={squatSets}
+          />
         </section>
       )}
 
@@ -340,22 +430,19 @@ export function DailyForm({
           <h2 className="text-sm font-semibold tracking-wide text-zinc-500 uppercase">
             Dominadas lastradas · Fuerza
           </h2>
-          <div className="grid grid-cols-2 gap-3">
-            <Field label="Lastre (kg)" hint="Kilos añadidos">
-              <input
-                inputMode="decimal"
-                className={inputClass}
-                {...register("pull_up_kg", { valueAsNumber: true })}
-              />
-            </Field>
-            <Field label="Reps (1ª serie)">
-              <input
-                inputMode="numeric"
-                className={inputClass}
-                {...register("pull_up_reps", { valueAsNumber: true })}
-              />
-            </Field>
-          </div>
+          <RecommendationHint rec={recommendations.pull_up_strength} />
+          <Field label="Lastre (kg)" hint="Kilos añadidos">
+            <input
+              inputMode="decimal"
+              className={inputClass}
+              {...register("pull_up_kg", { valueAsNumber: true })}
+            />
+          </Field>
+          <SetsFields
+            prefix="pull_up_set"
+            register={register}
+            values={pullUpSets}
+          />
         </section>
       )}
 
@@ -398,21 +485,27 @@ export function DailyForm({
           </div>
 
           {torsoMode === "classic" && (
-            <div className="grid grid-cols-2 gap-3 pt-1">
-              <Field label="Dominadas" hint="Reps 1ª serie">
-                <input
-                  inputMode="numeric"
-                  className={inputClass}
-                  {...register("pull_up_reps", { valueAsNumber: true })}
+            <div className="space-y-5 pt-1">
+              <div className="space-y-2">
+                <p className="text-sm font-medium text-zinc-700">Dominadas</p>
+                <RecommendationHint rec={recommendations.pull_up_hypertrophy} />
+                <SetsFields
+                  prefix="pull_up_set"
+                  register={register}
+                  values={pullUpSets}
                 />
-              </Field>
-              <Field label="Flexiones en anillas" hint="Reps 1ª serie">
-                <input
-                  inputMode="numeric"
-                  className={inputClass}
-                  {...register("push_up_reps", { valueAsNumber: true })}
+              </div>
+              <div className="space-y-2">
+                <p className="text-sm font-medium text-zinc-700">
+                  Flexiones en anillas
+                </p>
+                <RecommendationHint rec={recommendations.push_up_hypertrophy} />
+                <SetsFields
+                  prefix="push_up_set"
+                  register={register}
+                  values={pushUpSets}
                 />
-              </Field>
+              </div>
             </div>
           )}
 

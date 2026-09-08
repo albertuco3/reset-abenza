@@ -37,6 +37,7 @@ export type StrengthLog = {
   modality: TrainingModality;
   weight_kg: number | null;
   reps: number | null;
+  reps_per_set: number[] | null;
 };
 
 export type EmomLog = {

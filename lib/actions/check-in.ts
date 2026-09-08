@@ -5,7 +5,15 @@ import { completeCardioTrio, parseDurationInput } from "@/lib/cardio";
 import { createClient } from "@/lib/supabase/server";
 import type { EmomExercise, StrengthExercise } from "@/lib/types";
 import type { TrainingModality } from "@/lib/sessions";
-import { checkInSchema, type CheckInFormValues, type CheckInParsed } from "@/lib/validations/check-in";
+import { sumSets, type FourSets, type StrengthRecommendations } from "@/lib/progression";
+import {
+  checkInSchema,
+  completeSetsOrNull,
+  getSetValues,
+  type CheckInFormValues,
+  type CheckInParsed,
+  type SetPrefix,
+} from "@/lib/validations/check-in";
 import { getCheckInLoad } from "@/lib/data/check-in";
 
 export type CheckInState = {
@@ -20,7 +28,23 @@ type StrengthRow = {
   modality: TrainingModality;
   weight_kg: number | null;
   reps: number | null;
+  reps_per_set: FourSets;
 };
+
+function strengthFromSets(
+  data: CheckInParsed,
+  prefix: SetPrefix,
+  incompleteMessage: string,
+):
+  | { ok: true; sets: FourSets | null }
+  | { ok: false; message: string } {
+  const sets = completeSetsOrNull(data, prefix);
+  if (sets) return { ok: true, sets };
+  if (!getSetValues(data, prefix).some((value) => value != null)) {
+    return { ok: true, sets: null };
+  }
+  return { ok: false, message: incompleteMessage };
+}
 
 export async function saveCheckIn(raw: unknown): Promise<CheckInState> {
   const parsed = checkInSchema.safeParse(raw);
@@ -88,9 +112,18 @@ export async function saveCheckIn(raw: unknown): Promise<CheckInState> {
   ) {
     const modality: TrainingModality =
       data.session_type === "leg_strength" ? "strength" : "hypertrophy";
-    if (data.squat_kg != null || data.squat_reps != null) {
+    const squatSets = strengthFromSets(
+      data,
+      "squat_set",
+      "Sentadilla búlgara: indica las 4 series.",
+    );
+    if (!squatSets.ok) return squatSets;
+    if (data.squat_kg != null || squatSets.sets) {
       if (data.squat_kg == null) {
         return { ok: false, message: "Sentadilla búlgara: indica los kilos." };
+      }
+      if (!squatSets.sets) {
+        return { ok: false, message: "Sentadilla búlgara: indica las 4 series." };
       }
       strengthRows.push({
         daily_entry_id: entry.id,
@@ -98,17 +131,30 @@ export async function saveCheckIn(raw: unknown): Promise<CheckInState> {
         exercise: "squat",
         modality,
         weight_kg: data.squat_kg,
-        reps: data.squat_reps ?? null,
+        reps: sumSets(squatSets.sets),
+        reps_per_set: squatSets.sets,
       });
     }
   }
 
   if (data.session_type === "torso_strength") {
-    if (data.pull_up_kg != null || data.pull_up_reps != null) {
+    const pullSets = strengthFromSets(
+      data,
+      "pull_up_set",
+      "Dominadas lastradas: indica las 4 series.",
+    );
+    if (!pullSets.ok) return pullSets;
+    if (data.pull_up_kg != null || pullSets.sets) {
       if (data.pull_up_kg == null) {
         return {
           ok: false,
           message: "Dominadas lastradas: indica los kg de lastre.",
+        };
+      }
+      if (!pullSets.sets) {
+        return {
+          ok: false,
+          message: "Dominadas lastradas: indica las 4 series.",
         };
       }
       strengthRows.push({
@@ -117,7 +163,8 @@ export async function saveCheckIn(raw: unknown): Promise<CheckInState> {
         exercise: "pull_up",
         modality: "strength",
         weight_kg: data.pull_up_kg,
-        reps: data.pull_up_reps ?? null,
+        reps: sumSets(pullSets.sets),
+        reps_per_set: pullSets.sets,
       });
     }
   }
@@ -126,24 +173,38 @@ export async function saveCheckIn(raw: unknown): Promise<CheckInState> {
     data.session_type === "torso_hypertrophy" &&
     data.torso_hypertrophy_mode === "classic"
   ) {
-    if (data.pull_up_reps != null) {
+    const pullSets = strengthFromSets(
+      data,
+      "pull_up_set",
+      "Dominadas: indica las 4 series.",
+    );
+    if (!pullSets.ok) return pullSets;
+    if (pullSets.sets) {
       strengthRows.push({
         daily_entry_id: entry.id,
         user_id: user.id,
         exercise: "pull_up",
         modality: "hypertrophy",
         weight_kg: null,
-        reps: data.pull_up_reps,
+        reps: sumSets(pullSets.sets),
+        reps_per_set: pullSets.sets,
       });
     }
-    if (data.push_up_reps != null) {
+    const pushSets = strengthFromSets(
+      data,
+      "push_up_set",
+      "Flexiones en anillas: indica las 4 series.",
+    );
+    if (!pushSets.ok) return pushSets;
+    if (pushSets.sets) {
       strengthRows.push({
         daily_entry_id: entry.id,
         user_id: user.id,
         exercise: "push_up",
         modality: "hypertrophy",
         weight_kg: null,
-        reps: data.push_up_reps,
+        reps: sumSets(pushSets.sets),
+        reps_per_set: pushSets.sets,
       });
     }
   }
@@ -234,7 +295,12 @@ export async function saveCheckIn(raw: unknown): Promise<CheckInState> {
 export async function loadCheckInForDate(
   entryDate: string,
 ): Promise<
-  | { ok: true; values: CheckInFormValues; exists: boolean }
+  | {
+      ok: true;
+      values: CheckInFormValues;
+      exists: boolean;
+      recommendations: StrengthRecommendations;
+    }
   | { ok: false; message: string }
 > {
   if (!/^\d{4}-\d{2}-\d{2}$/.test(entryDate)) {
@@ -242,7 +308,12 @@ export async function loadCheckInForDate(
   }
 
   const loaded = await getCheckInLoad(entryDate);
-  return { ok: true, values: loaded.values, exists: loaded.exists };
+  return {
+    ok: true,
+    values: loaded.values,
+    exists: loaded.exists,
+    recommendations: loaded.recommendations,
+  };
 }
 
 export async function deleteCheckInDay(

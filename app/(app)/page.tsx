@@ -81,21 +81,21 @@ export default async function DashboardPage() {
 
       <LiftComboChart
         title="Sentadilla búlgara · Fuerza"
-        subtitle="Barras = kg · línea = reps (1ª serie)"
+        subtitle="Barras = kg · línea = reps totales (4 series)"
         exercise="squat"
         modality="strength"
         data={data.strength}
       />
       <LiftComboChart
         title="Sentadilla búlgara · Hipertrofia"
-        subtitle="Barras = kg · línea = reps (1ª serie)"
+        subtitle="Barras = kg · línea = reps totales (4 series)"
         exercise="squat"
         modality="hypertrophy"
         data={data.strength}
       />
       <LiftComboChart
         title="Dominadas lastradas · Fuerza"
-        subtitle="Barras = kg de lastre · línea = reps"
+        subtitle="Barras = kg de lastre · línea = reps totales (4 series)"
         exercise="pull_up"
         modality="strength"
         data={data.strength}
@@ -103,7 +103,7 @@ export default async function DashboardPage() {
       />
       <LiftComboChart
         title="Dominadas · Hipertrofia (clásico)"
-        subtitle="Reps de la 1ª serie"
+        subtitle="Reps totales (4 series)"
         exercise="pull_up"
         modality="hypertrophy"
         data={data.strength}
@@ -112,7 +112,7 @@ export default async function DashboardPage() {
       />
       <LiftComboChart
         title="Flexiones en anillas · Hipertrofia (clásico)"
-        subtitle="Reps de la 1ª serie"
+        subtitle="Reps totales (4 series)"
         exercise="push_up"
         modality="hypertrophy"
         data={data.strength}
