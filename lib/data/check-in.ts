@@ -38,6 +38,7 @@ function emptyValues(entryDate: string): CheckInFormValues {
     pull_up_set_2: undefined,
     pull_up_set_3: undefined,
     pull_up_set_4: undefined,
+    push_up_kg: undefined,
     push_up_set_1: undefined,
     push_up_set_2: undefined,
     push_up_set_3: undefined,
@@ -230,6 +231,8 @@ export async function getCheckInLoad(entryDate: string): Promise<CheckInLoad> {
       pull_up_set_2: pullUpSets.set_2,
       pull_up_set_3: pullUpSets.set_3,
       pull_up_set_4: pullUpSets.set_4,
+      push_up_kg:
+        pushUp?.weight_kg != null ? Number(pushUp.weight_kg) : undefined,
       push_up_set_1: pushUpSets.set_1,
       push_up_set_2: pushUpSets.set_2,
       push_up_set_3: pushUpSets.set_3,

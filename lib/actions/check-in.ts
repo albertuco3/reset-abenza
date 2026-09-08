@@ -185,10 +185,12 @@ export async function saveCheckIn(raw: unknown): Promise<CheckInState> {
         user_id: user.id,
         exercise: "pull_up",
         modality: "hypertrophy",
-        weight_kg: null,
+        weight_kg: data.pull_up_kg ?? null,
         reps: sumSets(pullSets.sets),
         reps_per_set: pullSets.sets,
       });
+    } else if (data.pull_up_kg != null) {
+      return { ok: false, message: "Dominadas: indica las 4 series." };
     }
     const pushSets = strengthFromSets(
       data,
@@ -202,10 +204,15 @@ export async function saveCheckIn(raw: unknown): Promise<CheckInState> {
         user_id: user.id,
         exercise: "push_up",
         modality: "hypertrophy",
-        weight_kg: null,
+        weight_kg: data.push_up_kg ?? null,
         reps: sumSets(pushSets.sets),
         reps_per_set: pushSets.sets,
       });
+    } else if (data.push_up_kg != null) {
+      return {
+        ok: false,
+        message: "Flexiones en anillas: indica las 4 series.",
+      };
     }
   }
 

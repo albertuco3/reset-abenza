@@ -44,21 +44,6 @@ function allDefined(values: (number | undefined)[]): boolean {
   return values.every((value) => value != null);
 }
 
-function requireFourSets(
-  ctx: z.RefinementCtx,
-  sets: (number | undefined)[],
-  prefix: SetPrefix,
-  label: string,
-) {
-  if (anyDefined(sets) && !allDefined(sets)) {
-    ctx.addIssue({
-      code: "custom",
-      message: `${label}: indica las 4 series.`,
-      path: [`${prefix}_1`],
-    });
-  }
-}
-
 export const checkInSchema = z
   .object({
     entry_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
@@ -80,6 +65,7 @@ export const checkInSchema = z
     pull_up_set_2: setRep,
     pull_up_set_3: setRep,
     pull_up_set_4: setRep,
+    push_up_kg: optNumber(z.number().min(0).max(999)),
     push_up_set_1: setRep,
     push_up_set_2: setRep,
     push_up_set_3: setRep,
@@ -152,18 +138,28 @@ export const checkInSchema = z
       data.session_type === "torso_hypertrophy" &&
       data.torso_hypertrophy_mode === "classic"
     ) {
-      requireFourSets(
-        ctx,
-        getSetValues(data, "pull_up_set"),
-        "pull_up_set",
-        "Dominadas",
-      );
-      requireFourSets(
-        ctx,
-        getSetValues(data, "push_up_set"),
-        "push_up_set",
-        "Flexiones en anillas",
-      );
+      const pullSets = getSetValues(data, "pull_up_set");
+      if (
+        (data.pull_up_kg != null || anyDefined(pullSets)) &&
+        !allDefined(pullSets)
+      ) {
+        ctx.addIssue({
+          code: "custom",
+          message: "Dominadas: indica las 4 series.",
+          path: ["pull_up_set_1"],
+        });
+      }
+      const pushSets = getSetValues(data, "push_up_set");
+      if (
+        (data.push_up_kg != null || anyDefined(pushSets)) &&
+        !allDefined(pushSets)
+      ) {
+        ctx.addIssue({
+          code: "custom",
+          message: "Flexiones en anillas: indica las 4 series.",
+          path: ["push_up_set_1"],
+        });
+      }
     }
   });
 

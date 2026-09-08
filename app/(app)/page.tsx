@@ -103,21 +103,19 @@ export default async function DashboardPage() {
       />
       <LiftComboChart
         title="Dominadas · Hipertrofia (clásico)"
-        subtitle="Reps totales (4 series)"
+        subtitle="Barras = kg de lastre · línea = reps totales (4 series)"
         exercise="pull_up"
         modality="hypertrophy"
         data={data.strength}
-        showWeight={false}
-        showReps
+        weightLabel="lastre kg"
       />
       <LiftComboChart
         title="Flexiones en anillas · Hipertrofia (clásico)"
-        subtitle="Reps totales (4 series)"
+        subtitle="Barras = kg de lastre · línea = reps totales (4 series)"
         exercise="push_up"
         modality="hypertrophy"
         data={data.strength}
-        showWeight={false}
-        showReps
+        weightLabel="lastre kg"
       />
 
       <EmomChart data={data.emom} />

@@ -489,6 +489,13 @@ export function DailyForm({
               <div className="space-y-2">
                 <p className="text-sm font-medium text-zinc-700">Dominadas</p>
                 <RecommendationHint rec={recommendations.pull_up_hypertrophy} />
+                <Field label="Lastre (kg)" hint="Vacío = sin lastre">
+                  <input
+                    inputMode="decimal"
+                    className={inputClass}
+                    {...register("pull_up_kg", { valueAsNumber: true })}
+                  />
+                </Field>
                 <SetsFields
                   prefix="pull_up_set"
                   register={register}
@@ -500,6 +507,13 @@ export function DailyForm({
                   Flexiones en anillas
                 </p>
                 <RecommendationHint rec={recommendations.push_up_hypertrophy} />
+                <Field label="Lastre (kg)" hint="Vacío = sin lastre">
+                  <input
+                    inputMode="decimal"
+                    className={inputClass}
+                    {...register("push_up_kg", { valueAsNumber: true })}
+                  />
+                </Field>
                 <SetsFields
                   prefix="push_up_set"
                   register={register}
