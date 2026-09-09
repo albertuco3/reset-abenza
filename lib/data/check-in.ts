@@ -140,10 +140,13 @@ async function loadRecommendations(
       if (!key || recommendations[key]) continue;
       const sets = parseFourSets(log.reps_per_set);
       if (!sets) continue;
-      recommendations[key] = recommendNextSession({
-        repsPerSet: sets,
-        weightKg: log.weight_kg != null ? Number(log.weight_kg) : null,
-      });
+      recommendations[key] = recommendNextSession(
+        {
+          repsPerSet: sets,
+          weightKg: log.weight_kg != null ? Number(log.weight_kg) : null,
+        },
+        log.modality === "strength" ? "strength" : "hypertrophy",
+      );
     }
   }
 

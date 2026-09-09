@@ -1,8 +1,13 @@
+import type { TrainingModality } from "@/lib/sessions";
+
 export const SET_COUNT = 4;
 export const SET_SLOTS = [1, 2, 3, 4] as const;
 export const WEIGHT_STEP_KG = 2.5;
-export const REP_RESET = 10;
-export const REP_CAP = 13;
+
+export const HYPERTROPHY_REP_CAP = 13;
+export const HYPERTROPHY_REP_RESET = 10;
+export const STRENGTH_REP_CAP = 7;
+export const STRENGTH_REP_RESET = 5;
 
 export type FourSets = [number, number, number, number];
 export type SetSlot = (typeof SET_SLOTS)[number];
@@ -34,19 +39,24 @@ export function parseFourSets(raw: unknown): FourSets | null {
 
 export function recommendNextSession(
   last: LastStrengthSession,
+  modality: TrainingModality,
 ): StrengthRecommendation {
   const lastTotal = sumSets(last.repsPerSet);
   const targetReps = Math.floor(lastTotal / SET_COUNT) + 1;
   const hasWeight = last.weightKg != null;
+  const cap =
+    modality === "strength" ? STRENGTH_REP_CAP : HYPERTROPHY_REP_CAP;
+  const reset =
+    modality === "strength" ? STRENGTH_REP_RESET : HYPERTROPHY_REP_RESET;
 
-  if (hasWeight && targetReps >= REP_CAP) {
+  if (hasWeight && targetReps >= cap) {
     const nextWeight =
       Math.round((last.weightKg! + WEIGHT_STEP_KG) * 10) / 10;
     return {
       lastRepsPerSet: last.repsPerSet,
       lastTotal,
       lastWeightKg: last.weightKg,
-      suggestedReps: REP_RESET,
+      suggestedReps: reset,
       suggestedWeightKg: nextWeight,
       kind: "weight",
     };
